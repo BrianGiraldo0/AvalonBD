@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.AnchorPane?>
+
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8" fx:controller="com.uniquindio.avalon.controllers.ClienteController">
+   <children>
+      <AnchorPane prefHeight="694.0" prefWidth="968.0" />
+      <HBox fx:id="panelSuperior" prefHeight="51.0" prefWidth="969.0" style="-fx-background-color: #40E0D0; -fx-border-radius: 10;">
+         <children>
+            <AnchorPane prefHeight="51.0" prefWidth="346.0">
+               <children>
+                  <Label alignment="CENTER" layoutX="-18.0" layoutY="11.0" prefHeight="30.0" prefWidth="296.0">
+                     <font>
+                        <Font name="Segoe UI Black" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="51.0" prefWidth="351.0">
+               <children>
+                  <TextField fx:id="tfBuscar" layoutX="83.0" layoutY="13.0" onKeyPressed="#keyListener" prefHeight="25.0" prefWidth="184.0" />
+                  <ImageView fitHeight="30.0" fitWidth="35.0" layoutX="282.0" layoutY="11.0" pickOnBounds="true" preserveRatio="true">
+                     <image>
+                        <Image url="@../imagenes/iconBuscar.png" />
+                     </image>
+                  </ImageView>
+               </children>
+            </AnchorPane>
+            <AnchorPane prefHeight="51.0" prefWidth="277.0">
+               <children>
+                  <Label fx:id="labelSuperiorListado" alignment="CENTER" layoutX="29.0" layoutY="11.0" prefHeight="30.0" prefWidth="247.0">
+                     <font>
+                        <Font name="Segoe UI Black" size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </AnchorPane>
+         </children>
+      </HBox>
+      <HBox layoutX="585.0" layoutY="617.0" prefHeight="41.0" prefWidth="200.0">
+         <children>
+            <Button fx:id="btnGuardar" mnemonicParsing="false" onAction="#actionListener" prefHeight="25.0" prefWidth="25.0" />
+            <Label text="            " />
+            <Button fx:id="btnBorrar" mnemonicParsing="false" onAction="#actionListener" prefHeight="25.0" prefWidth="27.0" />
+         </children>
+      </HBox>
+      <VBox layoutX="717.0" layoutY="431.0" prefHeight="200.0" prefWidth="136.0">
+         <children>
+            <Label fx:id="lbCorreoSelec" text="Correo:">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tfSelecCorreo" promptText="Correo" />
+            <Label text="              " />
+            <Label fx:id="lbSelecClave" text="Clave:">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tfClaveSelec" promptText="Clave" />
+            <Label>
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <Label text="              " />
+         </children>
+      </VBox>
+      <VBox layoutX="376.0" layoutY="431.0" prefHeight="190.0" prefWidth="167.0">
+         <children>
+            <Label fx:id="lbNicknameSelec" text="Nickname:">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tfNicknameSelec" promptText="Nickname" />
+            <Label text="              " />
+            <Label fx:id="lbCedulaSelec" text="Cédula:">
+               <font>
+                  <Font size="20.0" />
+               </font>
+            </Label>
+            <TextField fx:id="tfCedulaSelec" promptText="Cédula" />
+            <Label text="              " />
+            <Label text="              " />
+            <Label>
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </Label>
+            <Label text="              " />
+         </children>
+      </VBox>
+      <AnchorPane fx:id="panelTabla" layoutX="268.0" layoutY="65.0" prefHeight="314.0" prefWidth="699.0" style="-fx-border-color: #A9A9A9; -fx-border-radius: 5;">
+         <children>
+            <ScrollPane layoutX="14.0" layoutY="4.0" prefHeight="302.0" prefWidth="675.0">
+               <content>
+                  <TableView fx:id="tablaListado" prefHeight="299.0" prefWidth="670.0">
+                     <columns>
+                        <TableColumn fx:id="columNicknameCliente" prefWidth="132.0" text="Nickname" />
+                        <TableColumn fx:id="columCedulaCliente" prefWidth="168.0" text="Cédula" />
+                        <TableColumn fx:id="columCorreoCliente" prefWidth="214.0" text="Correo" />
+                        <TableColumn fx:id="columClaveCliente" prefWidth="156.0" text="Clave" />
+                     </columns>
+                  </TableView>
+               </content>
+            </ScrollPane>
+         </children>
+      </AnchorPane>
+      <AnchorPane fx:id="panelDatos" layoutX="-1.0" layoutY="64.0" prefHeight="606.0" prefWidth="253.0" style="-fx-border-radius: 5; -fx-border-color: #A9A9A9;">
+         <children>
+            <VBox layoutX="43.0" layoutY="67.0" prefHeight="330.0" prefWidth="167.0">
+               <children>
+                  <Label text="Nickname:">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="tfNickname" promptText="Nickname" />
+                  <Label text="              " />
+                  <Label text="Cédula:">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="tfCedula" promptText="Cédula" />
+                  <Label text="              " />
+                  <Label text="Correo:">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="tfCorreo" promptText="Correo" />
+                  <Label text="              " />
+                  <Label text="Clave:">
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+                  <PasswordField fx:id="tfClave" promptText="Clave" />
+                  <Label>
+                     <font>
+                        <Font size="20.0" />
+                     </font>
+                  </Label>
+               </children>
+            </VBox>
+            <HBox layoutX="94.0" layoutY="411.0" prefHeight="27.0" prefWidth="97.0">
+               <children>
+                  <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#actionListener" prefHeight="25.0" prefWidth="28.0" />
+                  <Label text="   " />
+                  <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#actionListener" prefHeight="25.0" prefWidth="26.0" />
+               </children>
+            </HBox>
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
