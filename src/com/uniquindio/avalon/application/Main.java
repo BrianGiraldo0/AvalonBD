@@ -18,7 +18,7 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
-		Parent root = FXMLLoader.load(getClass().getResource("/com/uniquindio/avalon/interfaces/Principal.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/com/uniquindio/avalon/interfaces/Login.fxml"));
         Scene scene = new Scene(root);
         root.setStyle("-fx-background-color: #FFFFFF");
         primaryStage.setScene(scene);
