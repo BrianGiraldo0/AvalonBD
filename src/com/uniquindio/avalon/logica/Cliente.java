@@ -8,6 +8,17 @@ public class Cliente {
 	private String correo;
 	private int saldo;
 	
+	
+	
+	public Cliente(String cedula, String nickname, String clave, String correo, int saldo) {
+		super();
+		this.cedula = cedula;
+		this.nickname = nickname;
+		this.clave = clave;
+		this.correo = correo;
+		this.saldo = saldo;
+	}
+
 	public Cliente ()
 	{
 		
@@ -43,4 +54,6 @@ public class Cliente {
 	public void setSaldo(int saldo) {
 		this.saldo = saldo;
 	}
+	
+	
 }

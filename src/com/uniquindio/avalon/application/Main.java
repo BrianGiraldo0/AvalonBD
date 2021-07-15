@@ -10,6 +10,7 @@ import javafx.scene.layout.BorderPane;
 
 public class Main extends Application {
 	
+	public static Stage stage;
 	public static void main(String[] args) {
 		launch(args);
 	}
@@ -18,6 +19,7 @@ public class Main extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) throws Exception {
+		stage = primaryStage;
 		Parent root = FXMLLoader.load(getClass().getResource("/com/uniquindio/avalon/interfaces/Login.fxml"));
         Scene scene = new Scene(root);
         root.setStyle("-fx-background-color: #FFFFFF");

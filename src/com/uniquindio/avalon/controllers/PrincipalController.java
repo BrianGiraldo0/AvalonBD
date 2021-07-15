@@ -31,7 +31,9 @@ public class PrincipalController {
 
     @FXML
     private Button btnClientes;
-
+    
+    public  static Pane panel;
+    
     @FXML
     void keyListener(ActionEvent event) {
 
@@ -46,10 +48,13 @@ public class PrincipalController {
     void initialize() throws IOException{
     	Parent cliente = FXMLLoader.load(getClass().getResource("/com/uniquindio/avalon/interfaces/Cliente.fxml"));
     	panelCambiante.getChildren().add(cliente);
+    	panel = panelCambiante;
     	
     	
     	
     }
+    
+    
 
 
    

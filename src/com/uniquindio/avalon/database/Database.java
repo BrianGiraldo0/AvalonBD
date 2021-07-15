@@ -4,8 +4,12 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+
+import com.uniquindio.avalon.logica.Cliente;
 
 public class Database {
 
@@ -18,7 +22,7 @@ public class Database {
 	
 	public static void main(String[] args) {
 		try {
-			openConnection();
+			openConnection(); 
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -34,11 +38,12 @@ public class Database {
 			e.printStackTrace();
 		}
 		connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?autoReconnect=true", user, pass);
-		dropAllTables();
+//		dropAllTables();
 		createTables();
 	}
+	
 	public static void createTables() throws SQLException {
-		String cliente = "CREATE TABLE IF NOT EXISTS Cliente (cedula VARCHAR(10) NOT NULL, nickname VARCHAR(80) NOT NULL UNIQUE, clave VARCHAR(100) NOT NULL, correo VARCHAR(80) NOT NULL, saldo INTEGER, PRIMARY KEY(cedula))";
+		String cliente = "CREATE TABLE IF NOT EXISTS Cliente (cedula VARCHAR(10) NOT NULL, nickname VARCHAR(80) NOT NULL UNIQUE, clave VARCHAR(100) NOT NULL, correo VARCHAR(80) NOT NULL, saldo INTEGER, PRIMARY KEY(cedula, nickname))";
 		String departamento = "CREATE TABLE IF NOT EXISTS Departamento (nombre VARCHAR(50), codigo INTEGER ,PRIMARY KEY(codigo))";
 		String ciudad = "CREATE TABLE IF NOT EXISTS Ciudad (nombre VARCHAR(50), codigo INTEGER, codigoDepartamento INTEGER, PRIMARY KEY(codigo), FOREIGN KEY(codigoDepartamento) REFERENCES Departamento(codigo))";
 		String empleado = "CREATE TABLE IF NOT EXISTS Empleado (cedula VARCHAR(10), nombre VARCHAR(80), correo VARCHAR(80), direccion VARCHAR(80), codigoCiudad INTEGER, PRIMARY KEY(cedula), FOREIGN KEY(codigoCiudad) REFERENCES Ciudad(codigo))";
@@ -80,6 +85,7 @@ public class Database {
 		update.execute(pedido);
 		update.execute(productoPedido);
 		update.execute(productoProveedor);
+		
 	}
 	
 	public static void dropAllTables() throws SQLException {
@@ -105,4 +111,71 @@ public class Database {
 		update.execute("DROP TABLE IF EXISTS Departamento");
 		update.execute("DROP TABLE IF EXISTS Cliente");
 	}
+	
+	
+	
+	public static void addClient(Cliente client) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement(); 
+		String query = "INSERT INTO Cliente VALUES('" + client.getCedula()+"', '" + client.getNickname()+"', '" + client.getClave()+"', '" + client.getCorreo()+"', " + client.getSaldo()+")";
+		update.execute(query);
+		
+	}
+	
+	
+	public static Cliente loadClient(String nickname) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "SELECT * FROM Cliente WHERE Cliente.nickname = '" + nickname + "'";
+		Cliente cliente = null;
+		ResultSet rs = update.executeQuery(query);
+		if(rs.next()) {
+			String cedula = rs.getString("cedula");
+			String correo = rs.getString("correo");
+			String clave = rs.getString("clave");
+			int saldo = rs.getInt("saldo");
+			cliente = new Cliente(cedula, nickname, clave, correo, saldo);
+		}
+
+		return cliente;
+	}
+	
+	
+	public static ArrayList<Cliente> loadClients() throws SQLException {
+		openConnection();
+		ArrayList<Cliente> clientes = new ArrayList<>();
+		Statement update = connection.createStatement();
+		String query = "SELECT * FROM Cliente";
+		ResultSet rs = update.executeQuery(query);
+		 while(rs.next()) {
+			 	String cedula = rs.getString("cedula");
+			 	String nickname = rs.getString("nickname");
+				String correo = rs.getString("correo");
+				String clave = rs.getString("clave");
+				int saldo = rs.getInt("saldo");
+				Cliente cliente = new Cliente(cedula, nickname, clave, correo, saldo);
+				clientes.add(cliente);
+		 }
+		 
+		return clientes;
+		
+	}
+	
+	public static void actualizarClient(Cliente cliente) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "UPDATE CLIENTE SET correo = '" + cliente.getCorreo() + "', clave = '" + cliente.getClave() + "' WHERE cedula = '" + cliente.getCedula()+"'";
+		update.execute(query);
+	}
+	
+	public static void borrarCliente(Cliente cliente) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "DELETE FROM CLIENTE WHERE cedula = '" + cliente.getCedula()+"'";
+		update.execute(query);
+		
+	}
+	
+	
+	
 }
