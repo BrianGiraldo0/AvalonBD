@@ -16,7 +16,7 @@
                <children>
                   <HBox prefHeight="30.0" prefWidth="505.0">
                      <children>
-                        <Button fx:id="btnEmpleados" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#actionListener" prefHeight="39.0" prefWidth="225.0" style="-fx-background-color: #F0F7FF;" text="Empleados">
+                        <Button fx:id="btnClientes" alignment="CENTER" mnemonicParsing="false" onAction="#actionListener" prefHeight="39.0" prefWidth="225.0" style="-fx-background-color: #F0F7FF;" text="Clientes">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>
@@ -24,7 +24,7 @@
                               <Font name="Arial Bold" size="15.0" />
                            </font>
                         </Button>
-                        <Button fx:id="btnClientes" alignment="CENTER" mnemonicParsing="false" onAction="#actionListener" prefHeight="39.0" prefWidth="225.0" style="-fx-background-color: #F0F7FF;" text="Clientes">
+                        <Button fx:id="btnEmpleados" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#actionListener" prefHeight="39.0" prefWidth="225.0" style="-fx-background-color: #F0F7FF;" text="Empleados">
                            <cursor>
                               <Cursor fx:constant="HAND" />
                            </cursor>

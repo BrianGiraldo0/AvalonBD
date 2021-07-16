@@ -10,6 +10,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.uniquindio.avalon.logica.Cliente;
+import com.uniquindio.avalon.logica.Empleado;
+import com.uniquindio.avalon.logica.Cliente;
 
 public class Database {
 
@@ -40,6 +42,7 @@ public class Database {
 		connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?autoReconnect=true", user, pass);
 //		dropAllTables();
 		createTables();
+		crearCiudades();
 	}
 	
 	public static void createTables() throws SQLException {
@@ -113,7 +116,33 @@ public class Database {
 	}
 	
 	
+	public static void crearCiudades() throws SQLException {
+		Statement update = connection.createStatement();
+		update.execute("INSERT INTO Departamento VALUES('Quindio', 1)");
+		update.execute("INSERT INTO Departamento VALUES('Cundinamarca', 2)");
+		update.execute("INSERT INTO Departamento VALUES('Santander', 3)");
+		update.execute("INSERT INTO Departamento VALUES('Valle del cauca', 4)");
+		update.execute("INSERT INTO Departamento VALUES('Tolima', 5)");
+		update.execute("INSERT INTO Departamento VALUES('Magdalena', 6)");
+		update.execute("INSERT INTO Departamento VALUES('Cesar', 7)");
+		update.execute("INSERT INTO Departamento VALUES('La Guajira', 8)");
+		update.execute("INSERT INTO Departamento VALUES('Antioquia', 9)");
+		
+		update.execute("INSERT INTO Ciudad VALUES('Armenia', 1, 1)");
+		update.execute("INSERT INTO Ciudad VALUES('Calarca', 2, 1)");
+		update.execute("INSERT INTO Ciudad VALUES('Circasia', 3, 1)");
+		update.execute("INSERT INTO Ciudad VALUES('Bogota', 4, 2)");
+		update.execute("INSERT INTO Ciudad VALUES('Ibague', 5, 5)");
+		update.execute("INSERT INTO Ciudad VALUES('Bucaramanga', 6, 3)");
+		update.execute("INSERT INTO Ciudad VALUES('Cali', 7, 4)");
+		update.execute("INSERT INTO Ciudad VALUES('Santa marta', 8, 6)");
+		update.execute("INSERT INTO Ciudad VALUES('Valledupar', 9, 7)");
+		update.execute("INSERT INTO Ciudad VALUES('Medellin', 10, 9)");
+	} 
 	
+	/*
+	 * Inicio DB Cliente
+	 */
 	public static void addClient(Cliente client) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement(); 
@@ -176,6 +205,61 @@ public class Database {
 		
 	}
 	
+	/*
+	 * Fin DB Cliente
+	 */
 	
 	
+	/*
+	 * Inicio DB Empleado
+	 */
+	public static ArrayList<Empleado> loadEmpleados() throws SQLException {
+		openConnection();
+		ArrayList<Empleado> empleados = new ArrayList<>();
+		Statement update = connection.createStatement();
+		String query = "SELECT e.*, c.nombre as ciudadNombre FROM Empleado e JOIN Ciudad c";
+		ResultSet rs = update.executeQuery(query);
+		 while(rs.next()) {
+			 	String cedula = rs.getString("cedula");
+				String correo = rs.getString("correo");
+				String nombre = rs.getString("nombre");
+				String ciudad = rs.getString("ciudadNombre");
+				String direccion = rs.getString("direccion");
+				
+				Empleado empleado = new Empleado(cedula, nombre, correo, direccion, ciudad);
+				empleados.add(empleado);
+				
+		 }
+		 
+		return empleados;
+		
+	}
+//	
+//	public static void addClient(Emplead client) throws SQLException {
+//		openConnection();
+//		Statement update = connection.createStatement(); 
+//		String query = "INSERT INTO Cliente VALUES('" + client.getCedula()+"', '" + client.getNickname()+"', '" + client.getClave()+"', '" + client.getCorreo()+"', " + client.getSaldo()+")";
+//		update.execute(query);
+//		
+//	}
+//	
+//	public static void actualizarClient(Emplead cliente) throws SQLException {
+//		openConnection();
+//		Statement update = connection.createStatement();
+//		String query = "UPDATE CLIENTE SET correo = '" + cliente.getCorreo() + "', clave = '" + cliente.getClave() + "' WHERE cedula = '" + cliente.getCedula()+"'";
+//		update.execute(query);
+//	}
+//	
+//	public static void borrarCliente(Emplead cliente) throws SQLException {
+//		openConnection();
+//		Statement update = connection.createStatement();
+//		String query = "DELETE FROM CLIENTE WHERE cedula = '" + cliente.getCedula()+"'";
+//		update.execute(query);
+//		
+//	}
+	
+	
+	/*
+	 * Fin DB Empleado
+	 */
 }

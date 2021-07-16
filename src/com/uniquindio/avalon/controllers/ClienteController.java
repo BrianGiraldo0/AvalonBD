@@ -30,293 +30,161 @@ import javafx.scene.layout.HBox;
 
 public class ClienteController {
 
-	 @FXML
-	    private TextField tfClaveSelec;
+	@FXML
+	private TextField tfClaveSelec;
 
-	    @FXML
-	    private TextField tfCorreo;
+	@FXML
+	private TextField tfCorreo;
 
-	    @FXML
-	    private HBox panelSuperior;
+	@FXML
+	private HBox panelSuperior;
 
-	    @FXML
-	    private TextField tfNicknameSelec;
+	@FXML
+	private TextField tfNicknameSelec;
 
-	    @FXML
-	    private AnchorPane panelDatos;
+	@FXML
+	private AnchorPane panelDatos;
 
-	    @FXML
-	    private Label lbCorreoSelec;
+	@FXML
+	private Label lbCorreoSelec;
 
-	    @FXML
-	    private TextField tfCedulaSelec;
+	@FXML
+	private TextField tfCedulaSelec;
 
-	    @FXML
-	    private AnchorPane panelTabla;
+	@FXML
+	private AnchorPane panelTabla;
 
-	    @FXML
-	    private TableColumn<?, ?> columCorreoCliente;
+	@FXML
+	private TableColumn<?, ?> columCorreoCliente;
 
-	    @FXML
-	    private TextField tfNickname;
+	@FXML
+	private TextField tfNickname;
 
-	    @FXML
-	    private TableColumn<?, ?> columNicknameCliente;
+	@FXML
+	private TableColumn<?, ?> columNicknameCliente;
 
-	    @FXML
-	    private TableView<Cliente> tablaListado;
+	@FXML
+	private TableView<Cliente> tablaListado;
 
-	    @FXML
-	    private Button btnBorrar;
+	@FXML
+	private Button btnBorrar;
 
-	    @FXML
-	    private Button btnLimpiar;
+	@FXML
+	private Button btnLimpiar;
 
-	    @FXML
-	    private Label labelSuperiorListado;
+	@FXML
+	private Label labelSuperiorListado;
 
-	    @FXML
-	    private Label lbNicknameSelec;
+	@FXML
+	private Label lbNicknameSelec;
 
-	    @FXML
-	    private TextField tfBuscar;
+	@FXML
+	private TextField tfBuscar;
 
-	    @FXML
-	    private Button btnAgregar;
+	@FXML
+	private Button btnAgregar;
 
-	    @FXML
-	    private TextField tfCedula;
+	@FXML
+	private TextField tfCedula;
 
-	    @FXML
-	    private TableColumn<?, ?> columClaveCliente;
+	@FXML
+	private TableColumn<?, ?> columClaveCliente;
 
-	    @FXML
-	    private Label lbSelecClave;
+	@FXML
+	private Label lbSelecClave;
 
-	    @FXML
-	    private Label lbCedulaSelec;
+	@FXML
+	private Label lbCedulaSelec;
 
-	    @FXML
-	    private Button btnGuardar;
+	@FXML
+	private Button btnGuardar;
 
-	    @FXML
-	    private TableColumn<?, ?> columCedulaCliente;
+	@FXML
+	private TableColumn<?, ?> columCedulaCliente;
 
-	    @FXML
-	    private PasswordField tfClave;
+	@FXML
+	private PasswordField tfClave;
 
-	    @FXML
-	    private TextField tfSelecCorreo;
-	    
-	    private ArrayList<Cliente> listaClientes = new ArrayList<>();
-	    
-	    private Cliente select;
+	@FXML
+	private TextField tfSelecCorreo;
 
-//    @FXML
-//    void keyPressed(ActionEvent event) {
-//    
-//    }
+	private ArrayList<Cliente> listaClientes = new ArrayList<>();
 
-    public void buscador(){
-    	tfBuscar.setOnKeyPressed(e->{
-    		if (tfBuscar.isFocused()) {
-    			if (tfBuscar.getText() != null) {
+	private Cliente select;
 
-    				Timer timer = new Timer(1, new ActionListener() {
-    					
-    					@Override
-    					public void actionPerformed(java.awt.event.ActionEvent e) {
-    						tablaListado.setItems(getListFound());
-    						
-    					}
-    				});
-    				timer.start();
-    				timer.setRepeats(false);
+	@FXML
+	private Label lblNotificacion;
 
-    			}
-
-    		}
-    	});
-    }
-    
-	ObservableList<Cliente> getListFound() {
-		
-		
-    	ObservableList<Cliente> listaTabla = FXCollections.observableArrayList(listaClientes);
-    	
-		ObservableList<Cliente> founds = FXCollections.observableArrayList();
-	
-		
-		for(Cliente c : listaTabla) {
-			if(c.getNickname().toLowerCase().contains(tfBuscar.getText().toLowerCase()) ||
-					c.getCedula().toLowerCase().contains(tfBuscar.getText().toLowerCase())) {
-				founds.add(c);
-			}
-		}
-
-		return founds;
-	}
-    
-    @FXML
+	@FXML
 	void initialize() {
-    	inicializarTabla();
-		lbCedulaSelec.setVisible(false);
-		lbSelecClave.setVisible(false);
-		lbCorreoSelec.setVisible(false);
-		lbNicknameSelec.setVisible(false);
-		tfCedulaSelec.setVisible(false);
-		tfClaveSelec.setVisible(false);
-		tfSelecCorreo.setVisible(false);
-		tfNicknameSelec.setVisible(false);
-		btnBorrar.setVisible(false);
-		btnGuardar.setVisible(false);
-		tfCedulaSelec.setEditable(false);
-		tfNicknameSelec.setEditable(false);
-		//inicializarVentana();
+		inicializarTabla();
+		limpiarCampos();
+		
+		// inicializarVentana();
 		colocarIconos();
 		botonAgregar();
 		botonActualizar();
 		botonEliminar();
 		botonLimpiar();
 		buscador();
-		
+
 	}
-    
-    public void botonActualizar() {
-    btnGuardar.setOnMouseClicked(e ->{
-    	select.setClave(tfClaveSelec.getText());
-    	select.setCorreo(tfSelecCorreo.getText());
-    	try {
-			Database.actualizarClient(select);
-		} catch (SQLException ex) {
-			// TODO Auto-generated catch block
-			ex.printStackTrace();
-		}
-    	actualizarTabla();
-    });
-  
-    }
-    
-    public void botonEliminar() {
-    	btnBorrar.setOnMouseClicked(e ->{
-        	try {
-				Database.borrarCliente(select);
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-    		limpiarCampos();
-    		select = null;
-    		actualizarTabla();
-        });
-    }
-    
-    public void botonLimpiar() {
-    	btnLimpiar.setOnMouseClicked(e ->{
-        	limpiarCampos();
-        });
-    }
-    public void botonAgregar() {
-    	btnAgregar.setOnMouseClicked(e->{
-    		String cedula = tfCedula.getText();
-			String correo = tfCorreo.getText();
-			String clave = 	tfClave.getText();
-			String nickname = tfNickname.getText();
-			int saldo = 0;
-			Cliente cliente = new Cliente(cedula, nickname, clave, correo, saldo);
-			try {
-				Database.addClient(cliente);
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-			actualizarTabla();
-			limpiarCampos();
-    	});
-    }
-    public void inicializarTabla() {
-    	columCedulaCliente.setCellValueFactory(new PropertyValueFactory<>("cedula"));
-    	columNicknameCliente.setCellValueFactory(new PropertyValueFactory<>("nickname"));
-    	columClaveCliente.setCellValueFactory(new PropertyValueFactory<>("clave"));
-    	columCorreoCliente.setCellValueFactory(new PropertyValueFactory<>("correo"));
-    
-    	tablaListado.setRowFactory(tv -> {
-    	TableRow<Cliente> row = new TableRow<>();
-		row.setOnMouseClicked(event -> {
-			if (event.getClickCount() == 2) {
-				Cliente rowData = row.getItem();
-				select = rowData;
-				if (rowData != null) {
-					tfCedulaSelec.setText(select.getCedula());
-					tfClaveSelec.setText(select.getClave());
-					tfNicknameSelec.setText(select.getNickname());
-					tfSelecCorreo.setText(select.getCorreo());
-					lbCedulaSelec.setVisible(true);
-					lbSelecClave.setVisible(true);
-					lbCorreoSelec.setVisible(true);
-					lbNicknameSelec.setVisible(true);
-					tfCedulaSelec.setVisible(true);
-					tfClaveSelec.setVisible(true);
-					tfSelecCorreo.setVisible(true);
-					tfNicknameSelec.setVisible(true);
-					btnBorrar.setVisible(true);
-					btnGuardar.setVisible(true);
+
+	public void inicializarTabla() {
+		columCedulaCliente.setCellValueFactory(new PropertyValueFactory<>("cedula"));
+		columNicknameCliente.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+		columClaveCliente.setCellValueFactory(new PropertyValueFactory<>("clave"));
+		columCorreoCliente.setCellValueFactory(new PropertyValueFactory<>("correo"));
+
+		tablaListado.setRowFactory(tv -> {
+			TableRow<Cliente> row = new TableRow<>();
+			row.setOnMouseClicked(event -> {
+				if (event.getClickCount() == 2) {
+					Cliente rowData = row.getItem();
+					select = rowData;
+					if (rowData != null) {
+						tfCedulaSelec.setText(select.getCedula());
+						tfClaveSelec.setText(select.getClave());
+						tfNicknameSelec.setText(select.getNickname());
+						tfSelecCorreo.setText(select.getCorreo());
+						lbCedulaSelec.setVisible(true);
+						lbSelecClave.setVisible(true);
+						lbCorreoSelec.setVisible(true);
+						lbNicknameSelec.setVisible(true);
+						tfCedulaSelec.setVisible(true);
+						tfClaveSelec.setVisible(true);
+						tfSelecCorreo.setVisible(true);
+						tfNicknameSelec.setVisible(true);
+						btnBorrar.setVisible(true);
+						btnGuardar.setVisible(true);
+					}
 				}
-			}
 			});
-		
+
 			return row;
-    	});
-    	
+		});
+
 		try {
 			listaClientes = Database.loadClients();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	ObservableList<Cliente> listaTabla = FXCollections.observableArrayList(listaClientes);
-    	tablaListado.setItems(listaTabla);
-    }
-    
-    public void actualizarTabla() {
+		ObservableList<Cliente> listaTabla = FXCollections.observableArrayList(listaClientes);
+		tablaListado.setItems(listaTabla);
+	}
+
+	public void actualizarTabla() {
 		try {
 			listaClientes = Database.loadClients();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    	ObservableList<Cliente> listaTabla = FXCollections.observableArrayList(listaClientes);
-    	tablaListado.setItems(listaTabla);
-    }
-    
-    public void limpiarCampos() {
-    	tfBuscar.setText("");
-    	tfCedula.setText("");
-    	tfCedulaSelec.setText("");
-    	tfClave.setText("");
-    	tfClaveSelec.setText("");
-    	tfCorreo.setText("");
-    	tfNickname.setText("");
-    	tfNicknameSelec.setText("");
-    	tfSelecCorreo.setText("");
-    	lbCedulaSelec.setVisible(false);
-		lbSelecClave.setVisible(false);
-		lbCorreoSelec.setVisible(false);
-		lbNicknameSelec.setVisible(false);
-		tfCedulaSelec.setVisible(false);
-		tfClaveSelec.setVisible(false);
-		tfSelecCorreo.setVisible(false);
-		tfNicknameSelec.setVisible(false);
-		btnBorrar.setVisible(false);
-		btnGuardar.setVisible(false);
-		tfCedulaSelec.setEditable(false);
-		tfNicknameSelec.setEditable(false);
-    	
-    	select = null;
-    	
-    }
-    
+		ObservableList<Cliente> listaTabla = FXCollections.observableArrayList(listaClientes);
+		tablaListado.setItems(listaTabla);
+	}
+
 	public void colocarIconos() {
 		URL iconBucar = getClass().getResource("/com/uniquindio/avalon/imagenes/iconAgregar.png");
 		URL iconLimpiar = getClass().getResource("/com/uniquindio/avalon/imagenes/iconLimpiar.png");
@@ -332,7 +200,140 @@ public class ClienteController {
 		btnAgregar.setGraphic(new ImageView(imagenBuscar));
 		btnLimpiar.setGraphic(new ImageView(imagenLimpiar));
 	}
-  
-    
+
+	public void botonActualizar() {
+		btnGuardar.setOnMouseClicked(e -> {
+			select.setClave(tfClaveSelec.getText());
+			select.setCorreo(tfSelecCorreo.getText());
+			try {
+				Database.actualizarClient(select);
+			} catch (SQLException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+			actualizarTabla();
+		});
+
+	}
+
+	public void botonEliminar() {
+		btnBorrar.setOnMouseClicked(e -> {
+			try {
+				Database.borrarCliente(select);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			limpiarCampos();
+			select = null;
+			actualizarTabla();
+		});
+	}
+
+	public void botonLimpiar() {
+		btnLimpiar.setOnMouseClicked(e -> {
+			limpiarCampos();
+		});
+	}
+
+	public void botonAgregar() {
+		btnAgregar.setOnMouseClicked(e -> {
+			String cedula = tfCedula.getText();
+			String correo = tfCorreo.getText();
+			String clave = tfClave.getText();
+			String nickname = tfNickname.getText();
+			int saldo = 0;
+			if (!verificarExistencia(cedula, nickname)) {
+				Cliente cliente = new Cliente(cedula, nickname, clave, correo, saldo);
+				try {
+					Database.addClient(cliente);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				actualizarTabla();
+				limpiarCampos();
+			} else {
+				lblNotificacion.setVisible(true);
+			}
+
+		});
+	}
+
+	public boolean verificarExistencia(String cedula, String nickname) {
+		for (Cliente c : listaClientes) {
+			if (c.getCedula().equals(cedula) || c.getNickname().equals(nickname)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void limpiarCampos() {
+		tfBuscar.setText("");
+		tfCedula.setText("");
+		tfCedulaSelec.setText("");
+		tfClave.setText("");
+		tfClaveSelec.setText("");
+		tfCorreo.setText("");
+		tfNickname.setText("");
+		tfNicknameSelec.setText("");
+		tfSelecCorreo.setText("");
+		lbCedulaSelec.setVisible(false);
+		lbSelecClave.setVisible(false);
+		lbCorreoSelec.setVisible(false);
+		lbNicknameSelec.setVisible(false);
+		tfCedulaSelec.setVisible(false);
+		tfClaveSelec.setVisible(false);
+		tfSelecCorreo.setVisible(false);
+		tfNicknameSelec.setVisible(false);
+		btnBorrar.setVisible(false);
+		btnGuardar.setVisible(false);
+		tfCedulaSelec.setEditable(false);
+		tfNicknameSelec.setEditable(false);
+		lblNotificacion.setVisible(false);
+		select = null;
+
+	}
+
+	public void buscador() {
+		tfBuscar.setOnKeyPressed(e -> {
+			if (tfBuscar.isFocused()) {
+				if (tfBuscar.getText() != null) {
+
+					Timer timer = new Timer(1, new ActionListener() {
+
+						@Override
+						public void actionPerformed(java.awt.event.ActionEvent e) {
+							tablaListado.setItems(getListFound());
+
+						}
+					});
+					timer.start();
+					timer.setRepeats(false);
+
+				}
+
+			}
+		});
+	}
+
+	public ObservableList<Cliente> getListFound() {
+
+		ObservableList<Cliente> listaTabla = FXCollections.observableArrayList(listaClientes);
+
+		ObservableList<Cliente> founds = FXCollections.observableArrayList();
+
+		for (Cliente c : listaTabla) {
+			if (c.getNickname().toLowerCase().contains(tfBuscar.getText().toLowerCase())
+					|| c.getCedula().toLowerCase().contains(tfBuscar.getText().toLowerCase())) {
+				founds.add(c);
+			}
+		}
+
+		return founds;
+	}
 
 }
