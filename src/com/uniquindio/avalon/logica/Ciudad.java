@@ -1,32 +1,20 @@
 package com.uniquindio.avalon.logica;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
+@AllArgsConstructor
 public class Ciudad {
 	
 	private String nombre;
 	private int codigo;
 	private int departamentoCodigo;
 	
-	public Ciudad()
-	{
-		
-	}
 	
-	public String getNombre() {
-		return nombre;
-	}
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-	public int getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(int codigo) {
-		this.codigo = codigo;
-	}
-	public int getDepartamentoCodigo() {
-		return departamentoCodigo;
-	}
-	public void setDepartamentoCodigo(int departamentoCodigo) {
-		this.departamentoCodigo = departamentoCodigo;
-	}
+	
+
+	
 }

@@ -2,6 +2,11 @@ package com.uniquindio.avalon.logica;
 
 import java.util.ArrayList;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
 public class Computador {
 
 	private String codigo;
@@ -24,48 +29,5 @@ public class Computador {
 	public boolean isOcupado() {
 		return ocupado;
 	}
-
-	public void setOcupado(boolean ocupado) {
-		this.ocupado = ocupado;
-	}
-
-	public String getCodigo() {
-		return codigo;
-	}
-	public void setCodigo(String codigo) {
-		this.codigo = codigo;
-	}
-	public String getCategoria() {
-		return categoria;
-	}
-	public void setCategoria(String categoria) {
-		this.categoria = categoria;
-	}
-
-
-	public ArrayList<Componente> getComponentes() {
-		return componentes;
-	}
-
-	public void setComponentes(ArrayList<Componente> componentes) {
-		this.componentes = componentes;
-	}
-
-	public ArrayList<ReporteMantenimiento> getReportesMantenimiento() {
-		return reportesMantenimiento;
-	}
-
-	public void setReportesMantenimiento(ArrayList<ReporteMantenimiento> reportesMantenimiento) {
-		this.reportesMantenimiento = reportesMantenimiento;
-	}
-
-	public ArrayList<Prestamo> getPrestamos() {
-		return prestamos;
-	}
-
-	public void setPrestamos(ArrayList<Prestamo> prestamos) {
-		this.prestamos = prestamos;
-	}
-	
 	
 }

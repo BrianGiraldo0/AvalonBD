@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
+import com.uniquindio.avalon.logica.Ciudad;
 import com.uniquindio.avalon.logica.Clase;
 import com.uniquindio.avalon.logica.Cliente;
 import com.uniquindio.avalon.logica.Computador;
@@ -49,7 +50,7 @@ public class Database {
 		connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?autoReconnect=true", user, pass);
 //		dropAllTables();
 		createTables();
-		crearCiudades();
+//		crearCiudades();
 	}
 	
 	public static void createTables() throws SQLException {
@@ -147,6 +148,36 @@ public class Database {
 		update.execute("INSERT INTO Ciudad VALUES('Medellin', 10, 9)");
 	} 
 	
+	public static Ciudad loadCiudad(int codigo) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement(); 
+		String query = "SELECT * FROM Ciudad WHERE Ciudad.codigo = " + codigo;
+		Ciudad ciudad = null;
+		ResultSet rs = update.executeQuery(query);
+		if(rs.next()) {
+			String nombre = rs.getString("nombre");
+			int codigoDepartamento = rs.getInt("codigoDepartamento");
+			ciudad = new Ciudad(nombre, codigo, codigoDepartamento);
+		}
+		
+		return ciudad;
+	}
+	
+	public static int getCiudadCodigo(String nombre) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement(); 
+		String query = "SELECT * FROM Ciudad WHERE Ciudad.nombre = '" + nombre +  "'";
+		ResultSet rs = update.executeQuery(query);
+		if(rs.next()) {
+			return rs.getInt("codigo");
+		}
+		
+		
+		return -1;
+		
+		
+	}
+	
 	/*
 	 * Inicio DB Cliente
 	 */
@@ -237,6 +268,8 @@ public class Database {
 	 */
 	
 	
+	
+	
 	/*
 	 * Inicio DB Empleado
 	 */
@@ -261,29 +294,31 @@ public class Database {
 		return empleados;
 		
 	}
-//	
-//	public static void addClient(Emplead client) throws SQLException {
-//		openConnection();
-//		Statement update = connection.createStatement(); 
-//		String query = "INSERT INTO Cliente VALUES('" + client.getCedula()+"', '" + client.getNickname()+"', '" + client.getClave()+"', '" + client.getCorreo()+"', " + client.getSaldo()+")";
-//		update.execute(query);
-//		
-//	}
-//	
-//	public static void actualizarClient(Emplead cliente) throws SQLException {
-//		openConnection();
-//		Statement update = connection.createStatement();
-//		String query = "UPDATE CLIENTE SET correo = '" + cliente.getCorreo() + "', clave = '" + cliente.getClave() + "' WHERE cedula = '" + cliente.getCedula()+"'";
-//		update.execute(query);
-//	}
-//	
-//	public static void borrarCliente(Emplead cliente) throws SQLException {
-//		openConnection();
-//		Statement update = connection.createStatement();
-//		String query = "DELETE FROM CLIENTE WHERE cedula = '" + cliente.getCedula()+"'";
-//		update.execute(query);
-//		
-//	}
+
+	
+	
+	public static void addEmpleado(Empleado empleado) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement(); 
+		String query = "INSERT INTO Cliente VALUES('" + empleado.getCedula()+"', '" + empleado.getNombre()+"', '" + empleado.getCorreo()+"', '" + empleado.getDireccion()+"', " + getCiudadCodigo(empleado.getCiudad())+")";
+		update.execute(query);
+		
+	}
+	
+	public static void actualizarEmpleado(Empleado empleado) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "UPDATE CLIENTE SET correo = '" + empleado.getCorreo() + "', nombre = '" + empleado.getNombre() + "', direccion = '" + empleado.getDireccion() +"', codigoCiudad = " +getCiudadCodigo(empleado.getCiudad()) +" WHERE cedula = '" + empleado.getCedula()+"'";
+		update.execute(query);
+	}
+	
+	public static void borrarCliente(Empleado empleado) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "DELETE FROM CLIENTE WHERE cedula = '" + empleado.getCedula()+"'";
+		update.execute(query);
+		
+	}
 	
 	
 	/*
@@ -445,6 +480,10 @@ public class Database {
 		return reportes;
 		
 	}
+	
+	/*
+	 * Fin reportes
+	 */
 	
 	
 	
