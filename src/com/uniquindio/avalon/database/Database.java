@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
+import com.oracle.jrockit.jfr.Producer;
 import com.uniquindio.avalon.logica.Ciudad;
 import com.uniquindio.avalon.logica.Clase;
 import com.uniquindio.avalon.logica.Cliente;
 import com.uniquindio.avalon.logica.Computador;
 import com.uniquindio.avalon.logica.Empleado;
+import com.uniquindio.avalon.logica.Producto;
 import com.uniquindio.avalon.logica.ReporteIntermedio1;
 import com.uniquindio.avalon.logica.ReporteIntermedio3;
 import com.uniquindio.avalon.logica.ReporteMantenimiento;
@@ -251,14 +253,14 @@ public class Database {
 	public static void actualizarClient(Cliente cliente) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement();
-		String query = "UPDATE CLIENTE SET correo = '" + cliente.getCorreo() + "', clave = '" + cliente.getClave() + "' WHERE cedula = '" + cliente.getCedula()+"'";
+		String query = "UPDATE Cliente SET correo = '" + cliente.getCorreo() + "', clave = '" + cliente.getClave() + "' WHERE cedula = '" + cliente.getCedula()+"'";
 		update.execute(query);
 	}
 	
 	public static void borrarCliente(Cliente cliente) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement();
-		String query = "DELETE FROM CLIENTE WHERE cedula = '" + cliente.getCedula()+"'";
+		String query = "DELETE FROM Cliente WHERE cedula = '" + cliente.getCedula()+"'";
 		update.execute(query);
 		
 	}
@@ -300,7 +302,7 @@ public class Database {
 	public static void addEmpleado(Empleado empleado) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement(); 
-		String query = "INSERT INTO Cliente VALUES('" + empleado.getCedula()+"', '" + empleado.getNombre()+"', '" + empleado.getCorreo()+"', '" + empleado.getDireccion()+"', " + getCiudadCodigo(empleado.getCiudad())+")";
+		String query = "INSERT INTO Empleado VALUES('" + empleado.getCedula()+"', '" + empleado.getNombre()+"', '" + empleado.getCorreo()+"', '" + empleado.getDireccion()+"', " + getCiudadCodigo(empleado.getCiudad())+")";
 		update.execute(query);
 		
 	}
@@ -308,14 +310,14 @@ public class Database {
 	public static void actualizarEmpleado(Empleado empleado) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement();
-		String query = "UPDATE CLIENTE SET correo = '" + empleado.getCorreo() + "', nombre = '" + empleado.getNombre() + "', direccion = '" + empleado.getDireccion() +"', codigoCiudad = " +getCiudadCodigo(empleado.getCiudad()) +" WHERE cedula = '" + empleado.getCedula()+"'";
+		String query = "UPDATE Empleado SET correo = '" + empleado.getCorreo() + "', nombre = '" + empleado.getNombre() + "', direccion = '" + empleado.getDireccion() +"', codigoCiudad = " +getCiudadCodigo(empleado.getCiudad()) +" WHERE cedula = '" + empleado.getCedula()+"'";
 		update.execute(query);
 	}
 	
-	public static void borrarCliente(Empleado empleado) throws SQLException {
+	public static void borrarEmpleado(Empleado empleado) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement();
-		String query = "DELETE FROM CLIENTE WHERE cedula = '" + empleado.getCedula()+"'";
+		String query = "DELETE FROM Empleado WHERE cedula = '" + empleado.getCedula()+"'";
 		update.execute(query);
 		
 	}
@@ -325,8 +327,61 @@ public class Database {
 	 * Fin DB Empleado
 	 */
 	
+	/*
+	 * Inico DB Producto
+	 */
+	public static ArrayList<Producto> loadProductos() throws SQLException {
+		openConnection();
+		ArrayList<Producto> productos = new ArrayList<>();
+		Statement update = connection.createStatement();
+		String query = "SELECT * FROM Producto";;
+		ResultSet rs = update.executeQuery(query);
+		 while(rs.next()) {
+			 	String codigo = rs.getString("codigo");
+				String descripcion = rs.getString("descripcion");
+				String nombre = rs.getString("nombre");
+				int precio = rs.getInt("precio");
+				Date fechaInicioGarantia = rs.getDate("fechaInicioGarantia");
+				Date fechaFinGarantia = rs.getDate("fechaFinGarantia");
+				
+				Producto producto = new Producto(codigo, descripcion, nombre, precio, fechaInicioGarantia, fechaFinGarantia);
+				productos.add(producto);
+				
+		 }
+		 
+		return productos;
+		
+	}
+
 	
 	
+	public static void addProducto(Producto producto) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement(); 
+		String query = "INSERT INTO Producto VALUES('" + producto.getCodigo()+"', '" + producto.getDescripcion()+"', '" + producto.getNombre() +"', '" + producto.getPrecio()+"', " + producto.getFechaInicioGarantia()+"', '" + producto.getFechaFinGarantia()+")";
+		update.execute(query);
+		
+	}
+	
+	public static void actualizarProducto(Producto producto) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "UPDATE Producto SET descripcion = '" + producto.getDescripcion() + "', nombre = '" + producto.getNombre() +"', precio = " + producto.getPrecio() + "' WHERE codigo = '" + producto.getCodigo()+"'";
+		update.execute(query);
+	}
+	
+	public static void borrarProducto(Producto producto) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "DELETE FROM Producto WHERE codigo = '" + producto.getCodigo()+"'";
+		update.execute(query);
+		
+	}
+	
+	
+	/*
+	 * Fin DB Producto
+	 */
 	
 	
 	

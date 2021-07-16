@@ -134,9 +134,9 @@ public class EmpleadoController {
 		inicializarTabla();
 		limpiarCampos();
 		colocarIconos();
-		botonAgregar();
-		botonActualizar();
-		botonEliminar();
+//		botonAgregar();
+//		botonActualizar();
+//		botonEliminar();
 		botonLimpiar();
 		buscador();
 
@@ -229,31 +229,31 @@ public class EmpleadoController {
 		});
 	}
 
-	public void botonAgregar() {
-		btnAgregar.setOnMouseClicked(e -> {
-			String cedula = tfCedula.getText();
-			String correo = tfCorreo.getText();
-			String nombre = tfNombre.getText();
-			String direccion = tfDireccion.getText();
-			String ciudad = cbCiudad.getValue().toString();
-			int saldo = 0;
-			if (!verificarExistencia(cedula, nickname)) {
-				Cliente cliente = new Cliente(cedula, nickname, clave, correo, saldo);
-				try {
-					Database.addClient(cliente);
-				} catch (SQLException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
-
-				actualizarTabla();
-				limpiarCampos();
-			} else {
-				lblNotificacion.setVisible(true);
-			}
-
-		});
-	}
+//	public void botonAgregar() {
+//		btnAgregar.setOnMouseClicked(e -> {
+//			String cedula = tfCedula.getText();
+//			String correo = tfCorreo.getText();
+//			String nombre = tfNombre.getText();
+//			String direccion = tfDireccion.getText();
+//			String ciudad = cbCiudad.getValue().toString();
+//			int saldo = 0;
+//			if (!verificarExistencia(cedula, nickname)) {
+//				Cliente cliente = new Cliente(cedula, nickname, clave, correo, saldo);
+//				try {
+//					Database.addClient(cliente);
+//				} catch (SQLException e1) {
+//					// TODO Auto-generated catch block
+//					e1.printStackTrace();
+//				}
+//
+//				actualizarTabla();
+//				limpiarCampos();
+//			} else {
+//				lblNotificacion.setVisible(true);
+//			}
+//
+//		});
+//	}
 
 	public void actualizarTabla() {
 		try {
