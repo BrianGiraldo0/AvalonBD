@@ -191,37 +191,37 @@ public class EmpleadoController {
 		tablaListado.setItems(listaTabla);
 	}
     
-//    public void botonActualizar() {
-//		btnGuardar.setOnMouseClicked(e -> {
-//			select.setCorreo(tfCorreoSelec.getText());
-//			select.setDireccion(tfDireccionSelec.getText());
-//			select.setCiudad("");
-//			select.setNombre(tfNombreSelec.getText());
-//			
-//			try {
-//				Database.actualizarClient(select);
-//			} catch (SQLException ex) {
-//				// TODO Auto-generated catch block
-//				ex.printStackTrace();
-//			}
-//			actualizarTabla();
-//		});
-//
-//	}
+    public void botonActualizar() {
+		btnGuardar.setOnMouseClicked(e -> {
+			select.setCorreo(tfCorreoSelec.getText());
+			select.setDireccion(tfDireccionSelec.getText());
+			select.setCiudad(cbCiudadSelec.getValue().toString());
+			select.setNombre(tfNombreSelec.getText());
+			
+			try {
+				Database.actualizarEmpleado(select);
+			} catch (SQLException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+			actualizarTabla();
+		});
 
-//	public void botonEliminar() {
-//		btnBorrar.setOnMouseClicked(e -> {
+	}
+
+	public void botonEliminar() {
+		btnBorrar.setOnMouseClicked(e -> {
 //			try {
-//				Database.borrarCliente(select);
+//				Database.borrarEmpleado(select);
 //			} catch (SQLException e1) {
 //				// TODO Auto-generated catch block
 //				e1.printStackTrace();
 //			}
-//			limpiarCampos();
-//			select = null;
-//			actualizarTabla();
-//		});
-//	}
+			limpiarCampos();
+			select = null;
+			actualizarTabla();
+		});
+	}
 
 	public void botonLimpiar() {
 		btnLimpiar.setOnMouseClicked(e -> {
@@ -236,11 +236,10 @@ public class EmpleadoController {
 			String nombre = tfNombre.getText();
 			String direccion = tfDireccion.getText();
 			String ciudad = cbCiudad.getValue().toString();
-			int saldo = 0;
-			if (!verificarExistencia(cedula, nickname)) {
-				Cliente cliente = new Cliente(cedula, nickname, clave, correo, saldo);
+			if (!verificarExistencia(cedula)) {
+				Empleado empleado = new Empleado(cedula, nombre, ciudad, correo, direccion);
 				try {
-					Database.addClient(cliente);
+					Database.addEmpleado(empleado);
 				} catch (SQLException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -287,21 +286,23 @@ public class EmpleadoController {
 		tfCorreoSelec.setText("");
 		tfNombreSelec.setText("");
 		tfDireccionSelec.setText("");
-		cbCiudadSelec.setVisible(true);
-		lbCedulaSelec.setVisible(true);
-		lbCorreoSelec.setVisible(true);
-		lbNombreSelec.setVisible(true);
-		lbDireccionSelec.setVisible(true);
-		lbCedulaSelec.setVisible(true);
-		lbCiudadSelec.setVisible(true);
-		tfCedulaSelec.setVisible(true);
-		tfCorreoSelec.setVisible(true);
-		tfNombreSelec.setVisible(true);
-		tfDireccionSelec.setVisible(true);
-		btnBorrar.setVisible(true);
-		btnGuardar.setVisible(true);
+		cbCiudadSelec.setVisible(false);
+		lbCedulaSelec.setVisible(false);
+		lbCorreoSelec.setVisible(false);
+		lbNombreSelec.setVisible(false);
+		lbDireccionSelec.setVisible(false);
+		lbCedulaSelec.setVisible(false);
+		lbCiudadSelec.setVisible(false);
+		tfCedulaSelec.setVisible(false);
+		tfCorreoSelec.setVisible(false);
+		tfNombreSelec.setVisible(false);
+		tfDireccionSelec.setVisible(false);
+		btnBorrar.setVisible(false);
+		btnGuardar.setVisible(false);
 		
 		tfCedulaSelec.setEditable(false);
+		
+		lblNotificacion.setVisible(false);
 		select = null;
 
 	}

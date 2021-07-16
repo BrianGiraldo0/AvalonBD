@@ -50,7 +50,7 @@ public class Database {
 		connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?autoReconnect=true", user, pass);
 //		dropAllTables();
 		createTables();
-//		crearCiudades();
+		crearCiudades();
 	}
 	
 	public static void createTables() throws SQLException {
