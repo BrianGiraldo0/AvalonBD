@@ -12,6 +12,7 @@ import java.util.Date;
 
 import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
 import com.oracle.jrockit.jfr.Producer;
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 import com.uniquindio.avalon.logica.Ciudad;
 import com.uniquindio.avalon.logica.Clase;
 import com.uniquindio.avalon.logica.Cliente;
@@ -179,7 +180,25 @@ public class Database {
 		
 		
 	}
-	
+	public static ArrayList<Ciudad> loadCiudades() throws SQLException{
+		openConnection();
+		ArrayList<Ciudad> ciudades = new ArrayList<>();
+		Statement update = connection.createStatement();
+		String query = "SELECT * FROM Ciudad";
+		ResultSet rs = update.executeQuery(query);
+		while(rs.next()) {
+			String nombre = rs.getString("nombre");
+			int codigo = rs.getInt("nombre");
+			int codigoDepartamento = rs.getInt("codigoDepartamento");
+			
+			Ciudad ciudad = new Ciudad(nombre, codigo, codigoDepartamento);
+			ciudades.add(ciudad);
+		}
+		
+		
+		return ciudades;
+	}
+
 	/*
 	 * Inicio DB Cliente
 	 */
@@ -190,6 +209,7 @@ public class Database {
 		update.execute(query);
 		
 	}
+	
 	
 	
 	public static Cliente loadClient(String nickname) throws SQLException {

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 import com.uniquindio.avalon.database.Database;
+import com.uniquindio.avalon.logica.Ciudad;
 import com.uniquindio.avalon.logica.Cliente;
 import com.uniquindio.avalon.logica.Empleado;
 import com.uniquindio.avalon.logica.Cliente;
@@ -114,7 +115,7 @@ public class EmpleadoController {
     private TextField tfDireccion;
 
     @FXML
-    private ComboBox<?> cbCiudad;
+    private ComboBox<String> cbCiudad;
 
     @FXML
     private Button btnAgregar;
@@ -130,8 +131,8 @@ public class EmpleadoController {
     
     
     @FXML
-	void initialize() {
-		inicializarTabla();
+	void initialize() throws SQLException {
+    	inicializarTabla();
 		limpiarCampos();
 		colocarIconos();
 //		botonAgregar();
@@ -139,9 +140,15 @@ public class EmpleadoController {
 //		botonEliminar();
 		botonLimpiar();
 		buscador();
+		cargarCombos();
 
 	}
-    
+    public void cargarCombos() throws SQLException {
+    	for(Ciudad c : Database.loadCiudades()) {
+    		cbCiudad.getItems().add(c.getNombre());
+    		cbCiudadSelec.getItems().add(c.getNombre());
+    	}
+    }
     public void inicializarTabla() {
 		columCedula.setCellValueFactory(new PropertyValueFactory<>("cedula"));
 		columNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -211,12 +218,12 @@ public class EmpleadoController {
 
 	public void botonEliminar() {
 		btnBorrar.setOnMouseClicked(e -> {
-//			try {
-//				Database.borrarEmpleado(select);
-//			} catch (SQLException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
+			try {
+				Database.borrarEmpleado(select);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			limpiarCampos();
 			select = null;
 			actualizarTabla();
