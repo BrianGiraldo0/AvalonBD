@@ -6,16 +6,29 @@ public class Computador {
 
 	private String codigo;
 	private String categoria;
-	private char ocupado;
+	private boolean ocupado;
 	private ArrayList<Componente> componentes;
 	private ArrayList<ReporteMantenimiento> reportesMantenimiento;
 	private ArrayList<Prestamo> prestamos;
 	
-	public Computador()
-	{
-		
+	
+	
+
+	public Computador(String codigo, String categoria, boolean ocupado) {
+		super();
+		this.codigo = codigo;
+		this.categoria = categoria;
+		this.ocupado = ocupado;
 	}
 	
+	public boolean isOcupado() {
+		return ocupado;
+	}
+
+	public void setOcupado(boolean ocupado) {
+		this.ocupado = ocupado;
+	}
+
 	public String getCodigo() {
 		return codigo;
 	}
@@ -28,12 +41,7 @@ public class Computador {
 	public void setCategoria(String categoria) {
 		this.categoria = categoria;
 	}
-	public char getOcupado() {
-		return ocupado;
-	}
-	public void setOcupado(char ocupado) {
-		this.ocupado = ocupado;
-	}
+
 
 	public ArrayList<Componente> getComponentes() {
 		return componentes;

@@ -9,21 +9,11 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Clase {
-	
+public class ReporteIntermedio1 {
+	private String nickname;
 	private String codigo;
 	private Date fecha;
-	private String descripcion;
-	private String observacion;
-	private String cedulaCliente;
-	private String cedulaEmpleado;
-	private double duracion;
 	
 	
 	
-	
-	public Clase() {
-		super();
-	}
-
 }

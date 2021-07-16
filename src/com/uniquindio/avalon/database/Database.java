@@ -8,9 +8,16 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
+import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
+import com.uniquindio.avalon.logica.Clase;
 import com.uniquindio.avalon.logica.Cliente;
+import com.uniquindio.avalon.logica.Computador;
 import com.uniquindio.avalon.logica.Empleado;
+import com.uniquindio.avalon.logica.ReporteIntermedio1;
+import com.uniquindio.avalon.logica.ReporteIntermedio3;
+import com.uniquindio.avalon.logica.ReporteMantenimiento;
 import com.uniquindio.avalon.logica.Cliente;
 
 public class Database {
@@ -169,6 +176,26 @@ public class Database {
 		return cliente;
 	}
 	
+	public static Computador loadComputer (String codigo) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "SELECT * FROM Computador c WHERE c.codigo = '" + codigo +"'";
+		Computador computador = null;
+		ResultSet rs = update.executeQuery(query);
+		if(rs.next()) {
+			String categoria = rs.getString("categoria");
+			int intOcupado = rs.getInt("ocupado");
+			boolean ocupado=false;
+			if(intOcupado==1)
+				ocupado = true;
+			
+			computador = new Computador(codigo, categoria, ocupado);
+		}
+		
+		return computador;
+		
+		}
+	
 	
 	public static ArrayList<Cliente> loadClients() throws SQLException {
 		openConnection();
@@ -262,4 +289,164 @@ public class Database {
 	/*
 	 * Fin DB Empleado
 	 */
+	
+	
+	
+	
+	
+	
+	
+	/*
+	 * Inicio reportes
+	 */
+	
+	public static ArrayList<Computador> reporteSimple1() throws SQLException{
+		openConnection();
+		ArrayList<Computador> computadores = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		String query="SELECT * FROM Computador c WHERE c.ocupado = 1";
+		ResultSet rs = update.executeQuery(query);
+		while(rs.next()) {
+			String codigo = rs.getString("codigo");
+			String categoria = rs.getString("categoria");
+			int intOcupado = rs.getInt("ocupado");
+			boolean ocupado=false;
+			if(intOcupado==1)
+				ocupado = true;
+			
+			Computador computador = new Computador(codigo, categoria, ocupado);
+			computadores.add(computador);
+		}
+		
+		
+		return computadores;
+	}
+	
+	
+	public static ArrayList<Cliente> reporteSimple2 () throws SQLException
+	{
+		openConnection();
+		ArrayList <Cliente> clientes = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		String query = "SELECT * FROM Ciente c WHERE c.saldo > 0";
+		ResultSet rs = update.executeQuery(query);
+		while(rs.next()) {
+			String nickname = rs.getString("nickname");
+			String cedula = rs.getString("cedula");
+			String correo = rs.getString("correo");
+			String clave = rs.getString("clave");
+			int saldo = rs.getInt("saldo");
+			Cliente cliente = new Cliente(cedula, nickname, clave, correo, saldo);
+			clientes.add(cliente);
+			
+			
+		}
+		
+		return clientes;
+		
+		
+	}
+	
+	public static ArrayList<Clase> reporteSimple3(String fecha) throws SQLException{
+		openConnection();
+		ArrayList <Clase> clases = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		String query = "SELECT * FROM Clase c WHERE c.fecha =" +" '"+ fecha+"'";
+		ResultSet rs = update.executeQuery(query);
+		while(rs.next()) {
+			String codigo = rs.getString("codigo");
+			Date fechaClase = rs.getDate("fecha");
+			String descripcion = rs.getString("descripcion"); 
+			String observacion = rs.getString("observacion");
+			String cedulaCliente = rs.getString("cedulaCliente");
+			String cedulaEmpleado = rs.getString("cedulaEmpleado");
+			int duracion = rs.getInt("duracion");
+			
+			Clase clase = new Clase(codigo, fechaClase, descripcion, observacion, cedulaCliente, cedulaEmpleado, duracion);
+			clases.add(clase);
+		}
+		
+		return clases;
+	}
+	
+	
+	public static ArrayList<ReporteIntermedio1> reporteIntermedio1 (String fecha) throws SQLException
+	{
+		openConnection();
+		ArrayList <ReporteIntermedio1> reportes = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		String query = "SELECT * FROM Ciente c JOIN Clase cl WHERE cl.fecha =" +" '"+ fecha+"'";
+		ResultSet rs = update.executeQuery(query);
+		while(rs.next()) {
+			String nickname = rs.getString("nickname");
+			Date fechaClase = rs.getDate("fecha");
+			String codigo  = rs.getString("codigo");
+			
+			ReporteIntermedio1 reporte = new ReporteIntermedio1(nickname, codigo, fechaClase);
+			
+			reportes.add(reporte);
+		}
+		
+		return reportes;
+		
+		
+	}
+	
+
+	public static ArrayList<Cliente> reporteIntermedio2 (String fechaActual, String fechaAnterior) throws SQLException
+	{
+		openConnection();
+		ArrayList <Cliente> clientes = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		String query = "SELECT * FROM Ciente c JOIN Recarga r JOIN Compra cp WHERE r.valorCargar > 5000 "
+				+ "AND r.fecha BETWEEN '" + fechaActual +"' " + "AND '"
+				+ fechaAnterior+"'";
+		ResultSet rs = update.executeQuery(query);
+		while(rs.next()) {
+			String nickname = rs.getString("nickname");
+			String cedula = rs.getString("cedula");
+			String correo = rs.getString("correo");
+			String clave = rs.getString("clave");
+			int saldo = rs.getInt("saldo");
+			Cliente cliente = new Cliente(cedula, nickname, clave, correo, saldo);
+			clientes.add(cliente);
+			
+			
+		}
+		
+		return clientes;
+		
+		
+	}
+	
+	public static ArrayList<ReporteIntermedio3> reporteIntermedio3() throws SQLException{
+		openConnection();
+		ArrayList<ReporteIntermedio3> reportes = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		String query = "SELECT r.*, c.codigo as codigoPC, e.nombre, c.categoria FROM ReporteMantenimiento r JOIN Computador c JOIN Empleado e";
+		ResultSet rs = update.executeQuery(query);
+		
+		while(rs.next()) {
+			String codigoMantenimiento = rs.getString("codigo");
+			String codigoPC = rs.getString("codigoPC");
+			String categoria = rs.getString("categoria");
+			String empleado = rs.getString("nombre");
+			String observacion = rs.getString("observacion");
+			ReporteIntermedio3 reporte = new ReporteIntermedio3(categoria, codigoPC, codigoMantenimiento, empleado, observacion);
+			reportes.add(reporte);
+		}
+		
+		return reportes;
+		
+	}
+	
+	
+	
+	
 }
