@@ -134,9 +134,9 @@ public class EmpleadoController {
 		inicializarTabla();
 		limpiarCampos();
 		colocarIconos();
-		botonAgregar();
-		botonActualizar();
-		botonEliminar();
+//		botonAgregar();
+//		botonActualizar();
+//		botonEliminar();
 		botonLimpiar();
 		buscador();
 
@@ -229,6 +229,7 @@ public class EmpleadoController {
 		});
 	}
 
+
 	public void botonAgregar() {
 		btnAgregar.setOnMouseClicked(e -> {
 			String cedula = tfCedula.getText();
@@ -253,6 +254,7 @@ public class EmpleadoController {
 
 		});
 	}
+
 
 	public void actualizarTabla() {
 		try {
