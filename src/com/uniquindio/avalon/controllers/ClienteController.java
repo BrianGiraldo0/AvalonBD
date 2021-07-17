@@ -4,7 +4,6 @@ import java.awt.event.ActionListener;
 import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.swing.Timer;
 
@@ -13,7 +12,6 @@ import com.uniquindio.avalon.logica.Cliente;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -301,7 +299,7 @@ public class ClienteController {
 	public void buscador() {
 		tfBuscar.setOnKeyPressed(e -> {
 			if (tfBuscar.isFocused()) {
-				if (tfBuscar.getText() != null) {
+				if (tfBuscar.getText() != null && tfBuscar.getText().equalsIgnoreCase("")) {
 
 					Timer timer = new Timer(1, new ActionListener() {
 

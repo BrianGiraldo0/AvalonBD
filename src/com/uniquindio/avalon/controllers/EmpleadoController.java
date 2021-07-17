@@ -9,13 +9,10 @@ import javax.swing.Timer;
 
 import com.uniquindio.avalon.database.Database;
 import com.uniquindio.avalon.logica.Ciudad;
-import com.uniquindio.avalon.logica.Cliente;
 import com.uniquindio.avalon.logica.Empleado;
-import com.uniquindio.avalon.logica.Cliente;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -27,7 +24,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
@@ -135,20 +131,22 @@ public class EmpleadoController {
     	inicializarTabla();
 		limpiarCampos();
 		colocarIconos();
-//		botonAgregar();
-//		botonActualizar();
-//		botonEliminar();
+		botonAgregar();
+		botonActualizar();
+		botonEliminar();
 		botonLimpiar();
 		buscador();
 		cargarCombos();
 
 	}
+    
     public void cargarCombos() throws SQLException {
     	for(Ciudad c : Database.loadCiudades()) {
     		cbCiudad.getItems().add(c.getNombre());
     		cbCiudadSelec.getItems().add(c.getNombre());
     	}
     }
+
     public void inicializarTabla() {
 		columCedula.setCellValueFactory(new PropertyValueFactory<>("cedula"));
 		columNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -337,7 +335,7 @@ public class EmpleadoController {
     public void buscador() {
 		tfBuscar.setOnKeyPressed(e -> {
 			if (tfBuscar.isFocused()) {
-				if (tfBuscar.getText() != null) {
+				if (tfBuscar.getText() != null && tfBuscar.getText().equalsIgnoreCase("")) {
 
 					Timer timer = new Timer(1, new ActionListener() {
 

@@ -8,21 +8,18 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
-import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
-import com.oracle.jrockit.jfr.Producer;
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 import com.uniquindio.avalon.logica.Ciudad;
 import com.uniquindio.avalon.logica.Clase;
 import com.uniquindio.avalon.logica.Cliente;
 import com.uniquindio.avalon.logica.Computador;
 import com.uniquindio.avalon.logica.Empleado;
 import com.uniquindio.avalon.logica.Producto;
+import com.uniquindio.avalon.logica.Recarga;
 import com.uniquindio.avalon.logica.ReporteIntermedio1;
 import com.uniquindio.avalon.logica.ReporteIntermedio3;
-import com.uniquindio.avalon.logica.ReporteMantenimiento;
-import com.uniquindio.avalon.logica.Cliente;
 
 public class Database {
 
@@ -53,7 +50,7 @@ public class Database {
 		connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?autoReconnect=true", user, pass);
 //		dropAllTables();
 		createTables();
-		crearCiudades();
+//		crearCiudades();
 	}
 	
 	public static void createTables() throws SQLException {
@@ -181,14 +178,13 @@ public class Database {
 		
 	}
 	public static ArrayList<Ciudad> loadCiudades() throws SQLException{
-		openConnection();
 		ArrayList<Ciudad> ciudades = new ArrayList<>();
 		Statement update = connection.createStatement();
 		String query = "SELECT * FROM Ciudad";
 		ResultSet rs = update.executeQuery(query);
 		while(rs.next()) {
 			String nombre = rs.getString("nombre");
-			int codigo = rs.getInt("nombre");
+			int codigo = rs.getInt("codigo");
 			int codigoDepartamento = rs.getInt("codigoDepartamento");
 			
 			Ciudad ciudad = new Ciudad(nombre, codigo, codigoDepartamento);
@@ -289,7 +285,59 @@ public class Database {
 	 * Fin DB Cliente
 	 */
 	
+	/* Inicio DB Recarga
+	 */
 	
+	public static ArrayList<Recarga> loadRecarga() throws SQLException {
+		openConnection();
+		ArrayList<Recarga> recargas = new ArrayList<>();
+		Statement update = connection.createStatement();
+		String query = "SELECT * FROM Recarga";;
+		ResultSet rs = update.executeQuery(query);
+		 while(rs.next()) {
+			 	String codigo = rs.getString("codigo");
+				int total  = rs.getInt("total");
+				int valorCargar = rs.getInt("valorCargar");
+				Date fecha = rs.getDate("fecha");
+				String cedulaCliente = rs.getString("cedulaCliente");
+				String cedulaEmpleado  = rs.getString("cedulaEmpleado");
+				Recarga recarga = new Recarga(codigo, total, valorCargar, fecha, cedulaCliente, cedulaEmpleado);
+				recargas.add(recarga);
+				
+		 }
+		 
+		return recargas;
+		
+	}
+	
+	public static void addRecarga(Recarga recarga) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement(); 
+		String query = "INSERT INTO Recarga VALUES('" + recarga.getCodigo()+"', '" + recarga.getTotal()+"', '" + recarga.getValorCargar() +"', '" + recarga.getFecha()+"', " + recarga.getClienteCedula()+"', '" + recarga.getEmpleadoCedula()+")";
+		update.execute(query);
+		
+	}
+	
+	public static void actualizarRecarga(Recarga recarga) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "UPDATE Recarga SET codigo = '" + recarga.getCodigo() + "', total = '" + recarga.getTotal() +"', valorCargar = " + recarga.getValorCargar() + "', fecha = " + recarga.getFecha()+"', cedulaCliente = " + recarga.getClienteCedula() +"', cedulaEmpleado = " + recarga.getEmpleadoCedula() +"' WHERE codigo = '" + recarga.getCodigo()+"'";
+		update.execute(query);
+	}
+	
+	public static void borrarRecarga(Recarga recarga) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "DELETE FROM Recarga WHERE codigo = '" + recarga.getCodigo()+"'";
+		update.execute(query);
+		
+	}
+	
+	/**
+	 * 
+	 * Fin de DB Recarga
+	 * 
+	 */
 	
 	
 	/*
@@ -299,7 +347,7 @@ public class Database {
 		openConnection();
 		ArrayList<Empleado> empleados = new ArrayList<>();
 		Statement update = connection.createStatement();
-		String query = "SELECT e.*, c.nombre as ciudadNombre FROM Empleado e JOIN Ciudad c";
+		String query = "SELECT e.*, c.nombre as ciudadNombre FROM Empleado e JOIN Ciudad c ON c.codigo = e.codigoCiudad;";
 		ResultSet rs = update.executeQuery(query);
 		 while(rs.next()) {
 			 	String cedula = rs.getString("cedula");
@@ -308,7 +356,7 @@ public class Database {
 				String ciudad = rs.getString("ciudadNombre");
 				String direccion = rs.getString("direccion");
 				
-				Empleado empleado = new Empleado(cedula, nombre, correo, direccion, ciudad);
+				Empleado empleado = new Empleado(cedula, nombre, ciudad, correo, direccion);
 				empleados.add(empleado);
 				
 		 }
@@ -378,7 +426,7 @@ public class Database {
 	public static void addProducto(Producto producto) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement(); 
-		String query = "INSERT INTO Producto VALUES('" + producto.getCodigo()+"', '" + producto.getDescripcion()+"', '" + producto.getNombre() +"', '" + producto.getPrecio()+"', " + producto.getFechaInicioGarantia()+"', '" + producto.getFechaFinGarantia()+")";
+		String query = "INSERT INTO Producto VALUES('" + producto.getCodigo()+"', '" + producto.getDescripcion()+"', '" + producto.getNombre() +"', " + producto.getPrecio()+", '" +convertDate(producto.getFechaInicioGarantia())+ "', '" + convertDate(producto.getFechaFinGarantia())+"')";
 		update.execute(query);
 		
 	}
@@ -386,7 +434,7 @@ public class Database {
 	public static void actualizarProducto(Producto producto) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement();
-		String query = "UPDATE Producto SET descripcion = '" + producto.getDescripcion() + "', nombre = '" + producto.getNombre() +"', precio = " + producto.getPrecio() + "' WHERE codigo = '" + producto.getCodigo()+"'";
+		String query = "UPDATE Producto SET descripcion = '" + producto.getDescripcion() + "', nombre = '" + producto.getNombre() +"', precio = " + producto.getPrecio() + " WHERE codigo = '" + producto.getCodigo()+"'";
 		update.execute(query);
 	}
 	
@@ -398,10 +446,20 @@ public class Database {
 		
 	}
 	
-	
 	/*
 	 * Fin DB Producto
 	 */
+	
+	public static String convertDate(Date fecha)
+	{
+		String formato = "";
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(fecha);
+		
+		formato = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" + calendar.get(Calendar.DAY_OF_MONTH);
+		
+		return formato;
+	}
 	
 	
 	
