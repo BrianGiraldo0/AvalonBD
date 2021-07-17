@@ -228,6 +228,24 @@ public class Database {
 		return cliente;
 	}
 	
+	public static Cliente loadClientbyId(String cedula) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement();
+		String query = "SELECT * FROM Cliente WHERE Cliente.cedula = '" + cedula + "'";
+		Cliente cliente = null;
+		ResultSet rs = update.executeQuery(query);
+		if(rs.next()) {
+			String nickname = rs.getString("nickname");
+			String cedulaCliente = rs.getString("cedula");
+			String correo = rs.getString("correo");
+			String clave = rs.getString("clave");
+			int saldo = rs.getInt("saldo");
+			cliente = new Cliente(cedulaCliente, nickname, clave, correo, saldo);
+		}
+
+		return cliente;
+	}
+	
 	public static Computador loadComputer (String codigo) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement();
@@ -315,8 +333,10 @@ public class Database {
 	
 	public static void addRecarga(Recarga recarga) throws SQLException {
 		openConnection();
+		
+		System.out.println("DB" + convertDate(recarga.getFecha()) );
 		Statement update = connection.createStatement(); 
-		String query = "INSERT INTO Recarga VALUES('" + recarga.getCodigo()+"', '" + recarga.getTotal()+"', '" + recarga.getValorCargar() +"', '" + recarga.getFecha()+"', " + recarga.getClienteCedula()+"', '" + recarga.getEmpleadoCedula()+")";
+		String query = "INSERT INTO Recarga VALUES('" + recarga.getCodigo()+"', '" + recarga.getTotal()+"', '" + recarga.getValorCargar() +"', '" + convertDate(recarga.getFecha())+"', '" + recarga.getClienteCedula()+"', '" + recarga.getEmpleadoCedula()+"')";
 		update.execute(query);
 		
 	}
@@ -324,7 +344,7 @@ public class Database {
 	public static void actualizarRecarga(Recarga recarga) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement();
-		String query = "UPDATE Recarga SET codigo = '" + recarga.getCodigo() + "', total = '" + recarga.getTotal() +"', valorCargar = " + recarga.getValorCargar() + "', fecha = " + recarga.getFecha()+"', cedulaCliente = " + recarga.getClienteCedula() +"', cedulaEmpleado = " + recarga.getEmpleadoCedula() +"' WHERE codigo = '" + recarga.getCodigo()+"'";
+		String query = "UPDATE Recarga SET  total = "+ recarga.getTotal() +", valorCargar = " + recarga.getValorCargar() + ", fecha = '" + convertDate(recarga.getFecha())+"', cedulaCliente = '" + recarga.getClienteCedula() +"', cedulaEmpleado = '" + recarga.getEmpleadoCedula() +"' WHERE codigo = '" + recarga.getCodigo()+ "'";
 		update.execute(query);
 	}
 	
@@ -366,6 +386,25 @@ public class Database {
 		 
 		return empleados;
 		
+	}
+	
+	public static Empleado loadEmpleado (String cedula) throws SQLException {
+		openConnection();
+		Empleado empleado = null;
+		Statement update = connection.createStatement();
+		String query = "SELECT  e.*,c.nombre as ciudadNombre From Empleado e JOIN Ciudad c ON c.codigo = e.codigoCiudad WHERE cedula = '" +cedula+ "'" ;
+		ResultSet rs = update.executeQuery(query);
+		 while(rs.next()) {
+			 	String cedulaEmpleado = rs.getString("cedula");
+				String correo = rs.getString("correo");
+				String nombre = rs.getString("nombre");
+				String ciudad = rs.getString("ciudadNombre");
+				String direccion = rs.getString("direccion");
+				
+				empleado = new Empleado(cedulaEmpleado, nombre, ciudad, correo, direccion);
+		 }
+		
+		return empleado;
 	}
 
 	
@@ -465,8 +504,13 @@ public class Database {
 	}
 
 	
-
+/*
+ * Recarga DB Recarga
+ * 
+ */
   
+	
+
   
 	
 	

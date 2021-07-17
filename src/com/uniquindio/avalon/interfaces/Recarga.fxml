@@ -22,7 +22,6 @@
                   <Font size="20.0" />
                </font>
             </Label>
-            <TextField fx:id="tfFechaSelec" layoutX="312.0" layoutY="535.0" promptText="Fecha" />
             <TextField fx:id="tfCedulaClienteSelec" layoutX="508.0" layoutY="463.0" promptText="Cédula cliente" />
             <Label fx:id="lbSelecCedulaCliente" layoutX="506.0" layoutY="433.0" text="Cédula cliente:">
                <font>
@@ -36,6 +35,7 @@
                   <Font size="20.0" />
                </font>
             </Label>
+            <DatePicker fx:id="tfFechaSelec" layoutX="312.0" layoutY="535.0" prefHeight="25.0" prefWidth="149.0" />
          </children>
       </AnchorPane>
       <HBox fx:id="panelSuperior" prefHeight="51.0" prefWidth="969.0" style="-fx-background-color: #40E0D0; -fx-border-radius: 10;">
@@ -134,7 +134,7 @@
                         <Font size="20.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="tfFecha" promptText="Fecha" />
+                  <DatePicker fx:id="tfFecha" />
                   <Label text="              " />
                   <Label text="Cédula cliente:">
                      <font>
@@ -169,15 +169,20 @@
                      </font>
                   </Label>
                   <Label text="              " />
+                  <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#actionListener" prefHeight="25.0" prefWidth="28.0" />
                </children>
             </VBox>
             <HBox layoutX="78.0" layoutY="529.0" prefHeight="27.0" prefWidth="97.0">
                <children>
-                  <Button fx:id="btnAgregar" mnemonicParsing="false" onAction="#actionListener" prefHeight="25.0" prefWidth="28.0" />
                   <Label text="   " />
                   <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#actionListener" prefHeight="25.0" prefWidth="26.0" />
                </children>
             </HBox>
+            <Label fx:id="lblNotificacion" layoutX="27.0" layoutY="556.0" prefHeight="51.0" prefWidth="200.0" text="Ya existe una recarga con ese código!" textAlignment="CENTER" textFill="RED" wrapText="true">
+               <font>
+                  <Font name="System Bold" size="12.0" />
+               </font>
+            </Label>
          </children>
       </AnchorPane>
    </children>
