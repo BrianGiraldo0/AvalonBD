@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.mysql.cj.x.protobuf.MysqlxCrud.Update;
@@ -33,6 +34,7 @@ public class Database {
 	public static Connection connection = null;
 	
 	public static void main(String[] args) {
+		System.out.println(convertDate(new Date()));
 		try {
 			openConnection(); 
 		} catch (SQLException e) {
@@ -51,8 +53,8 @@ public class Database {
 		}
 		connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?autoReconnect=true", user, pass);
 //		dropAllTables();
-		createTables();
-		crearCiudades();
+//		createTables();
+//		crearCiudades();
 	}
 	
 	public static void createTables() throws SQLException {
@@ -358,7 +360,7 @@ public class Database {
 	public static void addProducto(Producto producto) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement(); 
-		String query = "INSERT INTO Producto VALUES('" + producto.getCodigo()+"', '" + producto.getDescripcion()+"', '" + producto.getNombre() +"', '" + producto.getPrecio()+"', " + producto.getFechaInicioGarantia()+"', '" + producto.getFechaFinGarantia()+")";
+		String query = "INSERT INTO Producto VALUES('" + producto.getCodigo()+"', '" + producto.getDescripcion()+"', '" + producto.getNombre() +"', " + producto.getPrecio()+", '" +convertDate(producto.getFechaInicioGarantia())+ "', '" + convertDate(producto.getFechaFinGarantia())+"')";
 		update.execute(query);
 		
 	}
@@ -366,7 +368,7 @@ public class Database {
 	public static void actualizarProducto(Producto producto) throws SQLException {
 		openConnection();
 		Statement update = connection.createStatement();
-		String query = "UPDATE Producto SET descripcion = '" + producto.getDescripcion() + "', nombre = '" + producto.getNombre() +"', precio = " + producto.getPrecio() + "' WHERE codigo = '" + producto.getCodigo()+"'";
+		String query = "UPDATE Producto SET descripcion = '" + producto.getDescripcion() + "', nombre = '" + producto.getNombre() +"', precio = " + producto.getPrecio() + " WHERE codigo = '" + producto.getCodigo()+"'";
 		update.execute(query);
 	}
 	
@@ -378,12 +380,20 @@ public class Database {
 		
 	}
 	
-	
 	/*
 	 * Fin DB Producto
 	 */
 	
-	
+	public static String convertDate(Date fecha)
+	{
+		String formato = "";
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(fecha);
+		
+		formato = calendar.get(Calendar.YEAR) + "-" + (calendar.get(Calendar.MONTH)+1) + "-" + calendar.get(Calendar.DAY_OF_MONTH);
+		
+		return formato;
+	}
 	
 	
 	/*

@@ -1,10 +1,19 @@
 package com.uniquindio.avalon.controllers;
 
+import java.awt.event.ActionListener;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import javax.swing.Timer;
 
 import com.uniquindio.avalon.database.Database;
 import com.uniquindio.avalon.logica.Cliente;
+import com.uniquindio.avalon.logica.Producto;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -50,12 +59,6 @@ public class ProductoController {
     private Label lbNombreSelec;
 
     @FXML
-    private TextField tfNitProveedorSelec;
-
-    @FXML
-    private Label lbNitPreveedorSelec;
-
-    @FXML
     private HBox panelSuperior;
 
     @FXML
@@ -80,7 +83,7 @@ public class ProductoController {
     private AnchorPane panelTabla;
 
     @FXML
-    private TableView<?> tablaListado;
+    private TableView<Producto> tablaListado;
 
     @FXML
     private TableColumn<?, ?> columnCodigoProducto;
@@ -123,34 +126,46 @@ public class ProductoController {
     private TextField tfPrecio;
 
     @FXML
-    private TextField tfNitProveedor;
-
-    @FXML
     private Button btnAgregar;
 
     @FXML
     private Button btnLimpiar;
+    
+    private Producto select;
+    private ArrayList<Producto> listaProductos = new ArrayList<Producto>();
+    
+    @FXML
+    private Label lblNotificacion;
+    
+    @FXML
+    private Label lbFechaInicioSelec;
+
+    @FXML
+    private Label lbFechaFinSelec;
+
+    @FXML
+    private DatePicker tfFechaInicioGarantiaSelec;
+
+    @FXML
+    private DatePicker tfFechaFinGarantiaSelec;
 
     @FXML
  	void initialize() {
- 		lbNombreSelec.setVisible(false);
- 		lbCodigoSelec.setVisible(false);
- 		lbPrecioSelec.setVisible(false);
- 		lbDescripcionSelec.setVisible(false);
- 		lbNitPreveedorSelec.setVisible(false);
- 		tfNombreSelec.setVisible(false);
- 		tfPrecioSelec.setVisible(false);
- 		tfDescripcionSelec.setVisible(false);
- 		tfNitProveedorSelec.setVisible(false);
- 		tfCodigoSelec.setVisible(false);
  		
- 		btnBorrar.setVisible(false);
- 		btnGuardar.setVisible(false);
- 		//inicializarVentana();
- 		colorIconos();
+ 		
+    	inicializarTabla();
+		limpiarCampos();
+		
+		// inicializarVentana();
+		colocarIconos();
+		botonAgregar();
+		botonActualizar();
+		botonEliminar();
+		botonLimpiar();
+		buscador();
  	}
      
- 	public void colorIconos() {
+ 	public void colocarIconos() {
  		URL iconBucar = getClass().getResource("/com/uniquindio/avalon/imagenes/iconAgregar.png");
  		URL iconLimpiar = getClass().getResource("/com/uniquindio/avalon/imagenes/iconLimpiar.png");
  		URL iconGuardar = getClass().getResource("/com/uniquindio/avalon/imagenes/iconGuardar.png");
@@ -174,55 +189,211 @@ public class ProductoController {
 		columInicioGarantiaProducto.setCellValueFactory(new PropertyValueFactory<>("fechaInicioGarantia"));
 		columFinGarantiaProducto.setCellValueFactory(new PropertyValueFactory<>("fechaFinGarantia"));
 
-		tablaListado.setRowFactory(tv -> {
-			TableRow<Cliente> row = new TableRow<>();
+		tablaListado.setRowFactory(tv->{
+			TableRow<Producto> row = new TableRow<>();
 			row.setOnMouseClicked(event -> {
 				if (event.getClickCount() == 2) {
-					Cliente rowData = row.getItem();
+					Producto rowData = row.getItem();
 					select = rowData;
 					if (rowData != null) {
-						tfCedulaSelec.setText(select.getCedula());
-						tfClaveSelec.setText(select.getClave());
-						tfNicknameSelec.setText(select.getNickname());
-						tfSelecCorreo.setText(select.getCorreo());
-						lbCedulaSelec.setVisible(true);
-						lbSelecClave.setVisible(true);
-						lbCorreoSelec.setVisible(true);
-						lbNicknameSelec.setVisible(true);
-						tfCedulaSelec.setVisible(true);
-						tfClaveSelec.setVisible(true);
-						tfSelecCorreo.setVisible(true);
-						tfNicknameSelec.setVisible(true);
+						tfCodigoSelec.setText(select.getCodigo());
+						tfDescripcionSelec.setText(select.getDescripcion());
+						tfNombreSelec.setText(select.getNombre());
+						tfPrecioSelec.setText(select.getPrecio() + "");
+						tfFechaFinGarantiaSelec.setValue(dateToLocaldate(select.getFechaFinGarantia()));
+						tfFechaInicioGarantiaSelec.setValue(dateToLocaldate(select.getFechaInicioGarantia()));
+						lbCodigoSelec.setVisible(true);
+						lbDescripcionSelec.setVisible(true);
+						lbNombreSelec.setVisible(true);
+						lbPrecioSelec.setVisible(true);
+						lbFechaInicioSelec.setVisible(true);
+						lbFechaFinSelec.setVisible(true);
+						tfFechaInicioGarantiaSelec.setVisible(true);
+						tfFechaFinGarantiaSelec.setVisible(true);
+						tfCodigoSelec.setVisible(true);
+						tfDescripcionSelec.setVisible(true);
+						tfNombreSelec.setVisible(true);
+						tfPrecioSelec.setVisible(true);
 						btnBorrar.setVisible(true);
 						btnGuardar.setVisible(true);
 					}
 				}
 			});
-
+			
 			return row;
 		});
+		
 
 		try {
-			listaClientes = Database.loadClients();
+			listaProductos = Database.loadProductos();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ObservableList<Cliente> listaTabla = FXCollections.observableArrayList(listaClientes);
+		ObservableList<Producto> listaTabla = FXCollections.observableArrayList(listaProductos);
 		tablaListado.setItems(listaTabla);
 	}
 
+ 	public LocalDate dateToLocaldate(Date date) {
+ 		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(date);
+ 		LocalDate lDate = LocalDate.of(calendar.get(Calendar.YEAR), (calendar.get(Calendar.MONTH)+1), calendar.get(Calendar.DAY_OF_MONTH));
+ 		
+ 		return lDate;
+ 	}
 	public void actualizarTabla() {
 		try {
-			listaClientes = Database.loadClients();
+			listaProductos = Database.loadProductos();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		ObservableList<Cliente> listaTabla = FXCollections.observableArrayList(listaClientes);
+		ObservableList<Producto> listaTabla = FXCollections.observableArrayList(listaProductos);
 		tablaListado.setItems(listaTabla);
 	}
     
-  
+	public void botonActualizar() {
+		btnGuardar.setOnMouseClicked(e -> {
+			select.setDescripcion(tfDescripcionSelec.getText());
+			select.setNombre(tfNombreSelec.getText());
+			select.setPrecio(Integer.parseInt(tfPrecioSelec.getText()));
+			try {
+				Database.actualizarProducto(select);
+			} catch (SQLException ex) {
+				// TODO Auto-generated catch block
+				ex.printStackTrace();
+			}
+			actualizarTabla();
+		});
+
+	}
+
+	public void botonEliminar() {
+		btnBorrar.setOnMouseClicked(e -> {
+			try {
+				Database.borrarProducto(select);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			limpiarCampos();
+			select = null;
+			actualizarTabla();
+		});
+	}
+
+	public void botonLimpiar() {
+		btnLimpiar.setOnMouseClicked(e -> {
+			limpiarCampos();
+		});
+	}
+
+	public void botonAgregar() {
+		btnAgregar.setOnMouseClicked(e -> {
+			String codigo = tfCodigo.getText();
+			String descripcion = tfDescripcion.getText();
+			String nombre = tfNombre.getText();
+			int precio = Integer.parseInt(tfPrecio.getText());
+			Date fechaInicioGarantia = Date.from(tfFechaInicioGarantia.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+			Date fechaFinGarantia = Date.from(tfFechaFinGarantia.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
+			if (!verificarExistencia(codigo, nombre)) {
+				Producto producto = new Producto(codigo, descripcion, nombre, precio, fechaInicioGarantia, fechaFinGarantia);
+				try {
+					Database.addProducto(producto);
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+				actualizarTabla();
+				limpiarCampos();
+			} else {
+				lblNotificacion.setVisible(true);
+			}
+
+		});
+	}
+
+	public boolean verificarExistencia(String codigo, String nombre) {
+		for (Producto p : listaProductos) {
+			if (p.getCodigo().equals(codigo) || p.getNombre().equals(nombre)) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	public void limpiarCampos() {
+		tfBuscar.setText("");
+		tfCodigo.setText("");
+		tfCodigoSelec.setText("");
+		tfDescripcion.setText("");
+		tfDescripcionSelec.setText("");
+		tfNombre.setText("");
+		tfNombreSelec.setText("");
+		tfPrecio.setText("");
+		tfPrecioSelec.setText("");
+		tfFechaFinGarantia.setValue(LocalDate.now());
+		tfFechaFinGarantiaSelec.setValue(LocalDate.now());
+		tfFechaInicioGarantia.setValue(LocalDate.now());
+		tfFechaInicioGarantiaSelec.setValue(LocalDate.now());
+		lbCodigoSelec.setVisible(false);
+		lbNombreSelec.setVisible(false);
+		lbDescripcionSelec.setVisible(false);
+		lbPrecioSelec.setVisible(false);
+		lbFechaFinSelec.setVisible(false);
+		lbFechaInicioSelec.setVisible(false);
+		tfCodigoSelec.setVisible(false);
+		tfNombreSelec.setVisible(false);
+		tfDescripcionSelec.setVisible(false);
+		tfPrecioSelec.setVisible(false);
+		tfFechaFinGarantiaSelec.setVisible(false);
+		tfFechaInicioGarantiaSelec.setVisible(false);
+		btnBorrar.setVisible(false);
+		btnGuardar.setVisible(false);
+		tfCodigoSelec.setEditable(false);
+		lblNotificacion.setVisible(false);
+		select = null;
+
+	}
+
+	public void buscador() {
+		tfBuscar.setOnKeyPressed(e -> {
+			if (tfBuscar.isFocused()) {
+				if (tfBuscar.getText() != null) {
+
+					Timer timer = new Timer(1, new ActionListener() {
+
+						@Override
+						public void actionPerformed(java.awt.event.ActionEvent e) {
+							tablaListado.setItems(getListFound());
+
+						}
+					});
+					timer.start();
+					timer.setRepeats(false);
+
+				}
+
+			}
+		});
+	}
+
+	public ObservableList<Producto> getListFound() {
+
+		ObservableList<Producto> listaTabla = FXCollections.observableArrayList(listaProductos);
+
+		ObservableList<Producto> founds = FXCollections.observableArrayList();
+
+		for (Producto p : listaTabla) {
+			if (p.getNombre().toLowerCase().contains(tfBuscar.getText().toLowerCase())
+					|| p.getCodigo().toLowerCase().contains(tfBuscar.getText().toLowerCase())) {
+				founds.add(p);
+			}
+		}
+
+		return founds;
+	}
 
 }
