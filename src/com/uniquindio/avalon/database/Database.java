@@ -31,6 +31,7 @@ public class Database {
 	public static Connection connection = null;
 	
 	public static void main(String[] args) {
+		System.out.println(convertDate(new Date()));
 		try {
 			openConnection(); 
 		} catch (SQLException e) {
@@ -49,7 +50,9 @@ public class Database {
 		}
 		connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?autoReconnect=true", user, pass);
 //		dropAllTables();
+
 		createTables();
+
 //		crearCiudades();
 	}
 	
@@ -460,8 +463,11 @@ public class Database {
 		
 		return formato;
 	}
+
 	
-	
+
+  
+  
 	
 	
 	/*
