@@ -8,13 +8,11 @@ import java.util.ArrayList;
 import javax.swing.Timer;
 
 import com.uniquindio.avalon.database.Database;
-import com.uniquindio.avalon.logica.Cliente;
+import com.uniquindio.avalon.logica.Ciudad;
 import com.uniquindio.avalon.logica.Empleado;
-import com.uniquindio.avalon.logica.Cliente;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
@@ -26,7 +24,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 
@@ -114,7 +111,7 @@ public class EmpleadoController {
     private TextField tfDireccion;
 
     @FXML
-    private ComboBox<?> cbCiudad;
+    private ComboBox<String> cbCiudad;
 
     @FXML
     private Button btnAgregar;
@@ -130,18 +127,26 @@ public class EmpleadoController {
     
     
     @FXML
-	void initialize() {
-		inicializarTabla();
+	void initialize() throws SQLException {
+    	inicializarTabla();
 		limpiarCampos();
 		colocarIconos();
-//		botonAgregar();
-//		botonActualizar();
-//		botonEliminar();
+		botonAgregar();
+		botonActualizar();
+		botonEliminar();
 		botonLimpiar();
 		buscador();
+		cargarCombos();
 
 	}
     
+    public void cargarCombos() throws SQLException {
+    	for(Ciudad c : Database.loadCiudades()) {
+    		cbCiudad.getItems().add(c.getNombre());
+    		cbCiudadSelec.getItems().add(c.getNombre());
+    	}
+    }
+
     public void inicializarTabla() {
 		columCedula.setCellValueFactory(new PropertyValueFactory<>("cedula"));
 		columNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -211,12 +216,12 @@ public class EmpleadoController {
 
 	public void botonEliminar() {
 		btnBorrar.setOnMouseClicked(e -> {
-//			try {
-//				Database.borrarEmpleado(select);
-//			} catch (SQLException e1) {
-//				// TODO Auto-generated catch block
-//				e1.printStackTrace();
-//			}
+			try {
+				Database.borrarEmpleado(select);
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
 			limpiarCampos();
 			select = null;
 			actualizarTabla();
@@ -330,7 +335,7 @@ public class EmpleadoController {
     public void buscador() {
 		tfBuscar.setOnKeyPressed(e -> {
 			if (tfBuscar.isFocused()) {
-				if (tfBuscar.getText() != null) {
+				if (tfBuscar.getText() != null && tfBuscar.getText().equalsIgnoreCase("")) {
 
 					Timer timer = new Timer(1, new ActionListener() {
 

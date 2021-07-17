@@ -299,7 +299,7 @@ public class ClienteController {
 	public void buscador() {
 		tfBuscar.setOnKeyPressed(e -> {
 			if (tfBuscar.isFocused()) {
-				if (tfBuscar.getText() != null) {
+				if (tfBuscar.getText() != null && tfBuscar.getText().equalsIgnoreCase("")) {
 
 					Timer timer = new Timer(1, new ActionListener() {
 
