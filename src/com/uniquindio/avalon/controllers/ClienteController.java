@@ -234,7 +234,7 @@ public class ClienteController {
 		});
 	}
 
-	public void botonAgregar() {
+	public void botonAgregar() {	
 		btnAgregar.setOnMouseClicked(e -> {
 			String cedula = tfCedula.getText();
 			String correo = tfCorreo.getText();

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="690.0" prefWidth="486.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.uniquindio.avalon.controllers.ReportePDFController">
+   <children>
+      <Label layoutX="138.0" layoutY="105.0" text="Dirección: Cra 14 # 8N - 63 Edi. Cañaveral&#10;Correo: hola@avalongaming@com.co">
+         <font>
+            <Font size="13.0" />
+         </font>
+      </Label>
+      <TableView fx:id="tablaReporte" layoutX="10.0" layoutY="231.0" prefHeight="325.0" prefWidth="462.0">
+        <columns>
+          <TableColumn fx:id="columReporte1" prefWidth="75.0" text="Codigo" />
+          <TableColumn fx:id="columReporte2" prefWidth="75.0" text="Ciudad" />
+            <TableColumn fx:id="columReporte3" prefWidth="75.0" text="Ciudad" />
+            <TableColumn fx:id="columReporte4" prefWidth="75.0" text="Ciudad" />
+            <TableColumn fx:id="columReporte5" prefWidth="75.0" text="Ciudad" />
+            <TableColumn fx:id="columReporte6" prefWidth="75.0" text="Ciudad" />
+        </columns>
+      </TableView>
+      <ImageView fitHeight="124.0" fitWidth="149.0" layoutX="14.0" layoutY="51.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@logo2.png" />
+         </image>
+      </ImageView>
+      <Label layoutX="138.0" layoutY="85.0" text="AVALON GAMING">
+         <font>
+            <Font name="System Bold" size="14.0" />
+         </font>
+      </Label>
+      <Label fx:id="lblFechaReporte" layoutX="323.0" layoutY="34.0" text="lblFecha" />
+      <Separator layoutX="6.0" layoutY="183.0" prefHeight="3.0" prefWidth="470.0" />
+      <Label fx:id="lblTipoReporte" alignment="CENTER" contentDisplay="CENTER" layoutX="10.0" layoutY="195.0" prefHeight="25.0" prefWidth="470.0" style="-fx-background-color: df7160;" text="LBLTIPOREPORTE" textAlignment="CENTER" />
+      <Label layoutX="8.0" layoutY="651.0" text="Representación impresa del reporte de los clientes que disponene de saldo en Avalon Gaming,&#10;para mas información consultar en hola@avalongaming.com.co">
+         <font>
+            <Font size="10.0" />
+         </font>
+      </Label>
+      <ImageView fitHeight="38.0" fitWidth="65.0" layoutX="438.0" layoutY="647.0" pickOnBounds="true" preserveRatio="true">
+         <image>
+            <Image url="@logo.png" />
+         </image>
+      </ImageView>
+   </children>
+</AnchorPane>

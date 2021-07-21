@@ -1,10 +1,12 @@
 package com.uniquindio.avalon.controllers;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.print.PrinterJob;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -73,11 +75,8 @@ public class ReporteController {
     @FXML
     private Button generarReportebtn;
     
-
-    
-    
- 
-    
+    private String tipo;
+    private String opcion;
     
     @FXML
     void initialize () {
@@ -89,7 +88,7 @@ public class ReporteController {
     	
     	tipoReporteCombo.setOnAction ( e-> {
     		
-    		 String tipoReporte = 	tipoReporteCombo.getValue();
+    			String  tipoReporte = 	tipoReporteCombo.getValue();
     		    
     	    	if (tipoReporte.equals("Simple")) {
     	    		
@@ -149,8 +148,8 @@ public class ReporteController {
     		
     		String valor = reporteCombo.getValue();
     		
-    		String opcion = valor.substring(0, 1);
-    		String tipo = tipoReporteCombo.getValue();
+    		opcion = valor.substring(0, 1);
+    		tipo = tipoReporteCombo.getValue();
     		
     		//reporteCombo.setValue(valor.substring(0, 1));
     		
@@ -170,6 +169,38 @@ public class ReporteController {
     	column4.setVisible(false);
     	column5.setVisible(false);
     	column6.setVisible(false);
+    	
+    	
+    	generarPDFbtn.setOnMouseClicked(e->{
+    		Stage stage = new Stage();
+    		Parent root;
+			try {
+				FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/uniquindio/avalon/reportes/template.fxml"));
+				root = loader.load();
+				Scene scene = new Scene(root);
+				ReportePDFController control = loader.getController();
+				control.setOpcion(opcion);
+				control.setTipo(tipo);
+				control.init();
+	            root.setStyle("-fx-background-color: #FFFFFF");
+	            stage.setScene(scene);
+	            stage.show();
+	    		
+	            PrinterJob job = PrinterJob.createPrinterJob();
+	            
+	            if(job != null){
+	            job.printPage(root);
+	            job.endJob();
+	            }
+	            stage.close();
+			} catch (IOException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+            
+            
+    	});
     	
     	
     }
@@ -194,9 +225,11 @@ public class ReporteController {
     	
     	column1.setText("Código");
     	column2.setText("Estado");
+    	column2.setText("Estado");
     	
     	column1.setVisible(true);
     	column2.setVisible(true);
+    	
     	
     	column3.setVisible(false);
     	column4.setVisible(false);
