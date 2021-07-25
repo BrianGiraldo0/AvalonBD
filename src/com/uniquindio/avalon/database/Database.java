@@ -1,5 +1,7 @@
 package com.uniquindio.avalon.database;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
@@ -10,16 +12,20 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Scanner;
 
 import com.uniquindio.avalon.logica.Ciudad;
 import com.uniquindio.avalon.logica.Clase;
 import com.uniquindio.avalon.logica.Cliente;
+import com.uniquindio.avalon.logica.CompraProducto;
 import com.uniquindio.avalon.logica.Computador;
 import com.uniquindio.avalon.logica.Empleado;
 import com.uniquindio.avalon.logica.Producto;
 import com.uniquindio.avalon.logica.Recarga;
+import com.uniquindio.avalon.logica.ReporteComplejo3;
 import com.uniquindio.avalon.logica.ReporteIntermedio1;
 import com.uniquindio.avalon.logica.ReporteIntermedio3;
+import com.uniquindio.avalon.logica.ReporteIntermedio4;
 
 public class Database {
 
@@ -31,13 +37,48 @@ public class Database {
 	public static Connection connection = null;
 	
 	public static void main(String[] args) {
-		System.out.println(convertDate(new Date()));
 		try {
 			openConnection(); 
+			dropAllTables();
+			createTables();
+			crearCiudades();
+			llenarQuerysPrueba();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	
+	public static void llenarQuerysPrueba(){
+		ArrayList<String> lista = new ArrayList<>();
+		 try {
+		      File myObj = new File("DBReportes.txt");
+		      Scanner myReader = new Scanner(myObj);
+		      while (myReader.hasNextLine()) {
+		        String data = myReader.nextLine();
+		       lista.add(data);
+		      }
+		      myReader.close();
+		    } catch (FileNotFoundException e) {
+		      System.out.println("An error occurred.");
+		      e.printStackTrace();
+		    }
+		 Statement update;
+		 String sa ="";
+		try {
+			update = connection.createStatement();
+			for(String s : lista) {
+				sa=s;
+				 update.execute(s);
+			 }
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			System.out.println(sa);
+		}
+		 
+		 
 	}
 	
 	public static void openConnection() throws SQLException {
@@ -50,10 +91,9 @@ public class Database {
 		}
 		connection = DriverManager.getConnection("jdbc:mysql://" + host + ":" + port + "/" + dbname + "?autoReconnect=true", user, pass);
 //		dropAllTables();
+//
+//		createTables();
 
-		createTables();
-
-//		crearCiudades();
 	}
 	
 	public static void createTables() throws SQLException {
@@ -63,7 +103,7 @@ public class Database {
 		String empleado = "CREATE TABLE IF NOT EXISTS Empleado (cedula VARCHAR(10), nombre VARCHAR(80), correo VARCHAR(80), direccion VARCHAR(80), codigoCiudad INTEGER, PRIMARY KEY(cedula), FOREIGN KEY(codigoCiudad) REFERENCES Ciudad(codigo))";
 		String recarga = "CREATE TABLE IF NOT EXISTS Recarga (codigo VARCHAR(80), total INTEGER, valorCargar INTEGER, fecha DATE, cedulaCliente VARCHAR(10), cedulaEmpleado VARCHAR(10), PRIMARY KEY(codigo), FOREIGN KEY(cedulaCliente) REFERENCES Cliente(cedula), FOREIGN KEY(cedulaEmpleado) REFERENCES Empleado(cedula))";
 		String compra = "CREATE TABLE IF NOT EXISTS Compra (codigo VARCHAR(80), fecha DATE, direccion VARCHAR(80), cedulaCliente VARCHAR(10), telefono VARCHAR(15), codigoCiudad INTEGER, PRIMARY KEY(codigo), FOREIGN KEY(cedulaCliente) REFERENCES Cliente(cedula), FOREIGN KEY(codigoCiudad) REFERENCES Ciudad(codigo))";
-		String producto = "CREATE TABLE IF NOT EXISTS Producto (codigo VARCHAR(80), descripcion VARCHAR(300), nombre VARCHAR(80), precio INTEGER, fechaInicioGarantia DATE, fechaFinGarantia DATE, PRIMARY KEY(codigo))";
+		String producto = "CREATE TABLE IF NOT EXISTS Producto (codigo VARCHAR(80), descripcion VARCHAR(600), nombre VARCHAR(80), precio INTEGER, fechaInicioGarantia DATE, fechaFinGarantia DATE, PRIMARY KEY(codigo))";
 		String compraProducto = "CREATE TABLE IF NOT EXISTS CompraProducto (cantidad INTEGER, codigoProducto VARCHAR(80),codigoCompra VARCHAR(80), PRIMARY KEY(codigoProducto, codigoCompra), FOREIGN KEY(codigoProducto) REFERENCES Producto(codigo), FOREIGN KEY(codigoCompra) REFERENCES Compra(Codigo))";
 		String computador = "CREATE TABLE IF NOT EXISTS Computador (codigo VARCHAR(80), categoria VARCHAR(50), ocupado boolean DEFAULT false, PRIMARY KEY(codigo))";
 		String componente = "CREATE TABLE IF NOT EXISTS Componente (nombre VARCHAR(80), codigoComputador VARCHAR(80), codigo INTEGER, descripcion VARCHAR(300) , PRIMARY KEY(codigo), FOREIGN KEY(codigoComputador) REFERENCES Computador(codigo))";
@@ -181,6 +221,7 @@ public class Database {
 		
 	}
 	public static ArrayList<Ciudad> loadCiudades() throws SQLException{
+		openConnection();
 		ArrayList<Ciudad> ciudades = new ArrayList<>();
 		Statement update = connection.createStatement();
 		String query = "SELECT * FROM Ciudad";
@@ -548,7 +589,7 @@ public class Database {
 		ArrayList <Cliente> clientes = new ArrayList<>();
 		Statement update = connection.createStatement();
 		
-		String query = "SELECT * FROM Ciente c WHERE c.saldo > 0";
+		String query = "SELECT * FROM Cliente c WHERE c.saldo > 0";
 		ResultSet rs = update.executeQuery(query);
 		while(rs.next()) {
 			String nickname = rs.getString("nickname");
@@ -597,7 +638,7 @@ public class Database {
 		ArrayList <ReporteIntermedio1> reportes = new ArrayList<>();
 		Statement update = connection.createStatement();
 		
-		String query = "SELECT * FROM Ciente c JOIN Clase cl WHERE cl.fecha =" +" '"+ fecha+"'";
+		String query = "SELECT * FROM Cliente c INNER JOIN Clase cl ON c.cedula = cl.cedulaCliente WHERE cl.fecha =" +" DATE '"+ fecha+"'";
 		ResultSet rs = update.executeQuery(query);
 		while(rs.next()) {
 			String nickname = rs.getString("nickname");
@@ -621,9 +662,9 @@ public class Database {
 		ArrayList <Cliente> clientes = new ArrayList<>();
 		Statement update = connection.createStatement();
 		
-		String query = "SELECT * FROM Ciente c JOIN Recarga r JOIN Compra cp WHERE r.valorCargar > 5000 "
-				+ "AND r.fecha BETWEEN '" + fechaActual +"' " + "AND '"
-				+ fechaAnterior+"'";
+		String query = "SELECT * FROM (Cliente c JOIN Recarga r ON c.cedula = r.cedulaCliente) JOIN Compra cp ON cp.cedulaCliente = c.cedula WHERE r.valorCargar > 5000 "
+				+ "AND r.fecha BETWEEN '" + fechaAnterior +"' " + "AND '"
+				+ fechaActual+"'";
 		ResultSet rs = update.executeQuery(query);
 		while(rs.next()) {
 			String nickname = rs.getString("nickname");
@@ -647,7 +688,7 @@ public class Database {
 		ArrayList<ReporteIntermedio3> reportes = new ArrayList<>();
 		Statement update = connection.createStatement();
 		
-		String query = "SELECT r.*, c.codigo as codigoPC, e.nombre, c.categoria FROM ReporteMantenimiento r JOIN Computador c JOIN Empleado e";
+		String query = "SELECT r.*, c.codigo as codigoPC, e.nombre, c.categoria FROM (ReporteMantenimiento r JOIN Computador c ON r.codigoComputador = c.codigo) JOIN Empleado e ON r.cedulaEmpleado = e.cedula ORDER BY c.categoria ASC; ";
 		ResultSet rs = update.executeQuery(query);
 		
 		while(rs.next()) {
@@ -664,11 +705,77 @@ public class Database {
 		
 	}
 	
+	public static ArrayList<ReporteIntermedio4> reporteIntermedio4(String fechaFinal, String fechaInicio) throws SQLException{
+		openConnection();
+		ArrayList<ReporteIntermedio4> reportes = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		ResultSet rs = update.executeQuery("SELECT e.cedula, e.nombre, max(r.valorCargar) as maximaRecarga FROM Empleado e Join Recarga r ON e.cedula = r.cedulaEmpleado WHERE r.fecha BETWEEN '" + fechaInicio + "' AND '"  + fechaFinal + "' GROUP BY e.cedula;");
+		
+		while(rs.next()) {
+			String cedula = rs.getString("cedula");
+			String nombre = rs.getString("nombre");
+			int maximaRecarga = rs.getInt("maximaRecarga");
+			ReporteIntermedio4 ri = new ReporteIntermedio4(cedula, nombre, maximaRecarga);
+			reportes.add(ri);
+		}
+		
+		return reportes;
+	}
+	
+	public static ArrayList<Cliente> reporteComplejo1(String fechaFinal, String fechaInicio) throws SQLException{
+		openConnection();
+		ArrayList<Cliente> reportes = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		ResultSet rs = update.executeQuery("SELECT c.nickname from Cliente c JOIN Prestamo p ON c.cedula = p.cedulaCliente WHERE p.fecha BETWEEN '" + fechaInicio + "' AND '" + fechaFinal + "' AND c.cedula NOT IN (SELECT c.cedula from Cliente c JOIN Recarga r ON c.cedula = r.cedulaCliente);");
+		while(rs.next()) {
+			String nickname = rs.getString("nickname");
+			Cliente cliente = new Cliente(nickname);
+			reportes.add(cliente);
+		}
+		
+		return reportes;
+	}
+	
+	public static ArrayList<CompraProducto> reporteComplejo2() throws SQLException{
+		openConnection();
+		ArrayList<CompraProducto> reportes = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		ResultSet rs = update.executeQuery("SELECT p.nombre , count(p.codigo) as cantidadVentas from Producto p JOIN CompraProducto cp  ON cp.codigoProducto = p.codigo    JOIN ProductoProveedor pp ON pp.codigoProducto = p.codigo WHERE p.precio > 100000 AND pp.nitProveedor NOT IN (SELECT nit from Proveedor p WHERE nombre = 'Razer') GROUP BY p.codigo;");
+		while(rs.next()) {
+			String nombre = rs.getString("nombre");
+			int cantVentas = rs.getInt("cantidadVentas");
+			CompraProducto cp = new CompraProducto(cantVentas, nombre);
+			reportes.add(cp);
+		}
+		
+		return reportes;
+	}
+	
+	public static ArrayList<ReporteComplejo3> reporteComplejo3() throws SQLException {
+		openConnection();
+		ArrayList<ReporteComplejo3> reportes = new ArrayList<>();
+		Statement update = connection.createStatement();
+		
+		ResultSet rs = update.executeQuery("SELECT e.nombre, count(r.codigo) as cantidadRecargas from Empleado e JOIN Recarga r on e.cedula = r.cedulaEmpleado WHERE r.cedulaCliente IN (SELECT c.cedula from Cliente c JOIN Clase cl on c.cedula = cl.cedulaCliente) GROUP BY e.cedula;");
+		while(rs.next()) {
+			String nombre = rs.getString("nombre");
+			int cantidad = rs.getInt("cantidadRecargas");
+			
+			ReporteComplejo3 rc = new ReporteComplejo3(cantidad, nombre);
+			reportes.add(rc);
+		}
+		
+		return reportes;
+	}
+	
 	/*
 	 * Fin reportes
 	 */
 	
-	
+
 	
 	
 }

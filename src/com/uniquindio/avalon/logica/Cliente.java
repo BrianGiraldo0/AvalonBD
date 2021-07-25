@@ -1,5 +1,11 @@
 package com.uniquindio.avalon.logica;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter @Getter
+@AllArgsConstructor
 public class Cliente {
 	
 	private String cedula;
@@ -8,52 +14,9 @@ public class Cliente {
 	private String correo;
 	private int saldo;
 	
-	
-	
-	public Cliente(String cedula, String nickname, String clave, String correo, int saldo) {
-		super();
-		this.cedula = cedula;
-		this.nickname = nickname;
-		this.clave = clave;
-		this.correo = correo;
-		this.saldo = saldo;
-	}
 
-	public Cliente ()
-	{
-		
-	}
-	
-	public String getCedula() {
-		return cedula;
-	}
-	public void setCedula(String cedula) {
-		this.cedula = cedula;
-	}
-	public String getNickname() {
-		return nickname;
-	}
-	public void setNickname(String nickname) {
+	public Cliente (String nickname){
 		this.nickname = nickname;
 	}
-	public String getClave() {
-		return clave;
-	}
-	public void setClave(String clave) {
-		this.clave = clave;
-	}
-	public String getCorreo() {
-		return correo;
-	}
-	public void setCorreo(String correo) {
-		this.correo = correo;
-	}
-	public int getSaldo() {
-		return saldo;
-	}
-	public void setSaldo(int saldo) {
-		this.saldo = saldo;
-	}
-	
 	
 }

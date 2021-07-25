@@ -1,32 +1,22 @@
 package com.uniquindio.avalon.logica;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class CompraProducto {
 
 	private int cantidad;
 	private String productoCodigo;
 	private String compraCodigo;
-	
-	public CompraProducto()
-	{
-		
-	}
-	
-	public int getCantidad() {
-		return cantidad;
-	}
-	public void setCantidad(int cantidad) {
+	public CompraProducto(int cantidad, String productoCodigo) {
+		super();
 		this.cantidad = cantidad;
-	}
-	public String getProductoCodigo() {
-		return productoCodigo;
-	}
-	public void setProductoCodigo(String productoCodigo) {
 		this.productoCodigo = productoCodigo;
 	}
-	public String getCompraCodigo() {
-		return compraCodigo;
-	}
-	public void setCompraCodigo(String compraCodigo) {
-		this.compraCodigo = compraCodigo;
-	}
+	
+	
+	
+	
 }

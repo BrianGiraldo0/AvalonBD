@@ -1,8 +1,13 @@
 package com.uniquindio.avalon.controllers;
 import java.io.IOException;
+import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
+import com.uniquindio.avalon.database.Database;
+
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,17 +16,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 public class ReporteController {
 	
-    
+	private ObservableList<Object> listTable;
 	
 
     @FXML
@@ -31,7 +38,7 @@ public class ReporteController {
     private TableColumn<?, ?> column1;
 
     @FXML
-    private TableView<?> tablaListado;
+    private TableView<Object> tablaListado;
 
     @FXML
     private TableColumn<?, ?> column5;
@@ -70,7 +77,12 @@ public class ReporteController {
     private Button generarPDFbtn;
 
     @FXML
-    private TableColumn<?, ?> column6;
+    private Label lblFecha;
+
+    @FXML
+    private DatePicker datePicker;
+
+    
 
     @FXML
     private Button generarReportebtn;
@@ -80,7 +92,8 @@ public class ReporteController {
     
     @FXML
     void initialize () {
-    	
+    	datePicker.setVisible(false);
+		lblFecha.setVisible(false);
     	opcionLabel.setVisible(false);
     	opcionLabel.setWrapText(true);
     	
@@ -126,7 +139,7 @@ public class ReporteController {
     	    		
     	    		reportesComplejos.add("1. Listar los nickname de los clientes que hayan solicitado préstamos en los últimos 3 meses exceptuando aquellos que no hayan hecho recargas ");
     	    		reportesComplejos.add("2. Listar los productos más vendidos con un precio mayor a 100000 que no sean ofertados por el proveedor Razer");
-    	    		reportesComplejos.add("3. Obtener la cédula de los clientes que hayan realizado recargas entre 5000 y 20000 y que hayan agendado mínimo una clase");
+    	    		reportesComplejos.add("3. Mostrar por empleado la cantidad de recargas realizadas. Contar solo aquellas recargas realizadas a clientes que hayan solicitado por lo menos una clase");
     	    		reporteCombo.setItems(FXCollections.observableArrayList(reportesComplejos));
     	    		
     	    		
@@ -153,7 +166,15 @@ public class ReporteController {
     		
     		//reporteCombo.setValue(valor.substring(0, 1));
     		
-    		editarColumnasTabla(tipo,opcion);
+    		if((opcion.equals("1") && tipo.equals("Intermedio")) || (opcion.equals("3") && tipo.equals("Simple")) ) {
+    			datePicker.setVisible(true);
+    			lblFecha.setVisible(true);
+    		}else {
+    			datePicker.setVisible(false);
+    			lblFecha.setVisible(false);
+    		}
+    			
+    
     		opcionLabel.setVisible(true);
     		opcionLabel.setText(valor);
     		}
@@ -168,9 +189,10 @@ public class ReporteController {
     	column3.setVisible(false);
     	column4.setVisible(false);
     	column5.setVisible(false);
-    	column6.setVisible(false);
     	
-    	
+    	generarReportebtn.setOnMouseClicked(e->{
+    		editarColumnasTabla(tipo,opcion);
+    	});
     	generarPDFbtn.setOnMouseClicked(e->{
     		Stage stage = new Stage();
     		Parent root;
@@ -179,6 +201,9 @@ public class ReporteController {
 				root = loader.load();
 				Scene scene = new Scene(root);
 				ReportePDFController control = loader.getController();
+				if((opcion.equals("1") && tipo.equals("Intermedio")) || (opcion.equals("3") && tipo.equals("Simple")) )
+					control.setDate(datePicker.getValue());
+					
 				control.setOpcion(opcion);
 				control.setTipo(tipo);
 				control.init();
@@ -187,11 +212,11 @@ public class ReporteController {
 	            stage.show();
 	    		
 	            PrinterJob job = PrinterJob.createPrinterJob();
-	            
 	            if(job != null){
-	            job.printPage(root);
-	            job.endJob();
+		            job.printPage(root);
+		            job.endJob();
 	            }
+	            
 	            stage.close();
 			} catch (IOException e1) {
 				// TODO Auto-generated catch block
@@ -206,16 +231,9 @@ public class ReporteController {
     }
     
     
-    private void comboAction() {
-
- 
-
-    }
-    
     
     private void editarColumnasTabla(String tipo,String opcion) {
     	
-    	System.out.println(tipo + " " + opcion);
     	
     	if (tipo.equals("Simple")) {
     	
@@ -225,21 +243,27 @@ public class ReporteController {
     	
     	column1.setText("Código");
     	column2.setText("Estado");
-    	column2.setText("Estado");
-    	
     	column1.setVisible(true);
     	column2.setVisible(true);
-    	
-    	
     	column3.setVisible(false);
     	column4.setVisible(false);
     	column5.setVisible(false);
-    	column6.setVisible(false);
-    	tablaListado.refresh();	
+    	column1.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+    	column2.setCellValueFactory(new PropertyValueFactory<>("ocupado"));
+    	
+    	try {
+			listTable = FXCollections.observableArrayList(Database.reporteSimple1());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	tablaListado.setItems(listTable);
     	
     	}
     	
     	
+
     	if (opcion.equals("2")) {
     		column1.setText("Nickname");
         	column2.setText("Cedula");
@@ -250,8 +274,19 @@ public class ReporteController {
         	column3.setVisible(true);
         	column4.setVisible(true);
         	column5.setVisible(false);
-        	column6.setVisible(false);
-        	tablaListado.refresh();	
+        	column1.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+	    	column2.setCellValueFactory(new PropertyValueFactory<>("cedula"));
+	    	column3.setCellValueFactory(new PropertyValueFactory<>("correo"));
+	    	column4.setCellValueFactory(new PropertyValueFactory<>("saldo"));
+	    	
+	    	try {
+				listTable = FXCollections.observableArrayList(Database.reporteSimple2());
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	
+	    	tablaListado.setItems(listTable);
     	}
     	
     	if (opcion.equals("3")) {
@@ -262,9 +297,17 @@ public class ReporteController {
         	column3.setVisible(false);
         	column4.setVisible(false);
         	column5.setVisible(false);
-        	column6.setVisible(false);
-        	tablaListado.refresh();	
-    		
+        	column1.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+	    	column2.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+	    	
+	    	try {
+				listTable = FXCollections.observableArrayList(Database.reporteSimple3(datePicker.getValue().toString()));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	
+	    	tablaListado.setItems(listTable);
     	}
     	
     	}
@@ -281,9 +324,23 @@ public class ReporteController {
         	column3.setVisible(true);
         	column4.setVisible(false);
         	column5.setVisible(false);
-        	column6.setVisible(false);
         	
-    		}
+        	column1.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+	    	column2.setCellValueFactory(new PropertyValueFactory<>("codigo"));
+	    	column3.setCellValueFactory(new PropertyValueFactory<>("fecha"));
+	    	
+	    	try {
+				listTable = FXCollections.observableArrayList(Database.reporteIntermedio1(datePicker.getValue().toString()));
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	    	
+	    	tablaListado.setItems(listTable);
+	    	
+	    	}
+        	
+  
     		
     		if (opcion.equals("2")) {
     			column1.setText("Nickname");
@@ -295,8 +352,18 @@ public class ReporteController {
             	column3.setVisible(true);
             	column4.setVisible(true);
             	column5.setVisible(false);
-            	column6.setVisible(false);
-            	tablaListado.refresh();	
+            	column1.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+		    	column2.setCellValueFactory(new PropertyValueFactory<>("cedula"));
+		    	column3.setCellValueFactory(new PropertyValueFactory<>("correo"));
+		    	column4.setCellValueFactory(new PropertyValueFactory<>("saldo"));
+            	try {
+					listTable = FXCollections.observableArrayList(Database.reporteIntermedio2(LocalDate.now().toString(), restarMeses(6, LocalDate.now()).toString()));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    	tablaListado.setItems(listTable);
+		    	
     		}
     		
     		if (opcion.equals("3")) {
@@ -310,9 +377,18 @@ public class ReporteController {
             	column3.setVisible(true);
             	column4.setVisible(true);
             	column5.setVisible(true);
-            	column6.setVisible(false);
-            	tablaListado.refresh();	
-    			
+            	column1.setCellValueFactory(new PropertyValueFactory<>("categoria"));
+		    	column2.setCellValueFactory(new PropertyValueFactory<>("codigoPC"));
+		    	column3.setCellValueFactory(new PropertyValueFactory<>("codigoMantenimiento"));
+		    	column4.setCellValueFactory(new PropertyValueFactory<>("empleado"));
+		    	column5.setCellValueFactory(new PropertyValueFactory<>("observacion"));
+            	try {
+					listTable = FXCollections.observableArrayList(Database.reporteIntermedio3());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    	tablaListado.setItems(listTable);
     		}
     		
     		if (opcion.equals("4")) {
@@ -324,8 +400,16 @@ public class ReporteController {
             	column3.setVisible(true);
             	column4.setVisible(false);
             	column5.setVisible(false);
-            	column6.setVisible(false);
-            	tablaListado.refresh();	
+            	column1.setCellValueFactory(new PropertyValueFactory<>("cedula"));
+		    	column2.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+		    	column3.setCellValueFactory(new PropertyValueFactory<>("maximaRecarga"));
+            	try {
+					listTable = FXCollections.observableArrayList(Database.reporteIntermedio4(LocalDate.now().toString(), restarMeses(1, LocalDate.now()).toString()));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    	tablaListado.setItems(listTable);
     		}
     		
     	}
@@ -334,58 +418,77 @@ public class ReporteController {
     		
     		if (opcion.endsWith("1")) {
     			column1.setText("Nickname");
-            	column2.setText("Prestamo");
-            	column3.setText("Fecha");
             	column1.setVisible(true);
-            	column2.setVisible(true);
-            	column3.setVisible(true);
+            	column2.setVisible(false);
+            	column3.setVisible(false);
             	column4.setVisible(false);
             	column5.setVisible(false);
-            	column6.setVisible(false);
-            	tablaListado.refresh();	
-    			
-    			
+            	column1.setCellValueFactory(new PropertyValueFactory<>("nickname"));
+            	try {
+					listTable = FXCollections.observableArrayList(Database.reporteComplejo1(LocalDate.now().toString(), restarMeses(3, LocalDate.now()).toString()));
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    	tablaListado.setItems(listTable);
     		}
     		
     		if (opcion.equals("2")) {
-    			
     			column1.setText("Producto");
-            	column2.setText("Precio");
-            	column3.setText("Proveedor");
+            	column2.setText("Cantidad de ventas");
             	column1.setVisible(true);
             	column2.setVisible(true);
-            	column3.setVisible(true);
+            	column3.setVisible(false);
             	column4.setVisible(false);
             	column5.setVisible(false);
-            	column6.setVisible(false);
-            	tablaListado.refresh();	
-    			
+            	column1.setCellValueFactory(new PropertyValueFactory<>("productoCodigo"));
+            	column2.setCellValueFactory(new PropertyValueFactory<>("cantidad"));
+            	try {
+					listTable = FXCollections.observableArrayList(Database.reporteComplejo2());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    	tablaListado.setItems(listTable);
+            	
     			
     		}
     		
     		if (opcion.equals("3")) {
-    			column1.setText("Cedula");
-            	column2.setText("Nickname");
-            	column3.setText("Saldo");
+    			column1.setText("Nombre");
+            	column2.setText("Cantidad de recargas");
             	column1.setVisible(true);
             	column2.setVisible(true);
-            	column3.setVisible(true);
+            	column3.setVisible(false);
             	column4.setVisible(false);
             	column5.setVisible(false);
-            	column6.setVisible(false);
-            	tablaListado.refresh();	
+            	column1.setCellValueFactory(new PropertyValueFactory<>("nombre"));
+            	column2.setCellValueFactory(new PropertyValueFactory<>("cantidadRecargas"));
+            	try {
+					listTable = FXCollections.observableArrayList(Database.reporteComplejo3());
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		    	tablaListado.setItems(listTable);
+    		
     		}
     		
     		
     	}
     	
     
- 
-    	
     	
     }
     
-    
+    public LocalDate restarMeses(int meses, LocalDate fecha) {
+		 
+		 LocalDate resultante = null;
+		 
+		  resultante = fecha.minusMonths(meses);
+		 
+		 return resultante;
+	 }
     
     @FXML
     void keyListener(ActionEvent event) {

@@ -1,5 +1,6 @@
 package com.uniquindio.avalon.application;
 	
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -41,7 +42,7 @@ public class Main extends Application {
 	public void start(Stage primaryStage) throws Exception {
 		stage = primaryStage;
 
-		Parent root = FXMLLoader.load(getClass().getResource("/com/uniquindio/avalon/interfaces/Reporte.fxml"));
+		Parent root = FXMLLoader.load(getClass().getResource("/com/uniquindio/avalon/interfaces/Login.fxml"));
 
         Scene scene = new Scene(root);
         root.setStyle("-fx-background-color: #FFFFFF");
