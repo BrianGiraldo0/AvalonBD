@@ -1,3 +1,4 @@
+INSERT INTO Administrador VALUES('admin', 'admin');
 INSERT INTO Computador VALUES('PC01', 'VIP', false);
 INSERT INTO Computador VALUES('PC02', 'VIP', true);
 INSERT INTO Computador VALUES('PC03', 'VIP', true);

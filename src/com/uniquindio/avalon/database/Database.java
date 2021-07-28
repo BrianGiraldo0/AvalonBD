@@ -14,6 +14,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Scanner;
 
+import com.uniquindio.avalon.logica.Administrador;
 import com.uniquindio.avalon.logica.Ciudad;
 import com.uniquindio.avalon.logica.Clase;
 import com.uniquindio.avalon.logica.Cliente;
@@ -97,6 +98,7 @@ public class Database {
 	}
 	
 	public static void createTables() throws SQLException {
+		String administrador = "CREATE TABLE IF NOT EXISTS Administrador (nickname VARCHAR(80) NOT NULL UNIQUE, clave VARCHAR(100) NOT NULL, PRIMARY KEY(nickname))";
 		String cliente = "CREATE TABLE IF NOT EXISTS Cliente (cedula VARCHAR(10) NOT NULL, nickname VARCHAR(80) NOT NULL UNIQUE, clave VARCHAR(100) NOT NULL, correo VARCHAR(80) NOT NULL, saldo INTEGER, PRIMARY KEY(cedula, nickname))";
 		String departamento = "CREATE TABLE IF NOT EXISTS Departamento (nombre VARCHAR(50), codigo INTEGER ,PRIMARY KEY(codigo))";
 		String ciudad = "CREATE TABLE IF NOT EXISTS Ciudad (nombre VARCHAR(50), codigo INTEGER, codigoDepartamento INTEGER, PRIMARY KEY(codigo), FOREIGN KEY(codigoDepartamento) REFERENCES Departamento(codigo))";
@@ -119,6 +121,7 @@ public class Database {
 		String productoProveedor = "CREATE TABLE IF NOT EXISTS ProductoProveedor (nitProveedor VARCHAR(15), codigoProducto VARCHAR(80), PRIMARY KEY(nitProveedor, codigoProducto), FOREIGN KEY(nitProveedor) REFERENCES Proveedor(nit), FOREIGN KEY(codigoProducto) REFERENCES Producto(codigo))";
 		
 		Statement update = connection.createStatement();
+		update.execute(administrador);
 		update.execute(cliente);
 		update.execute(departamento);
 		update.execute(ciudad);
@@ -220,6 +223,22 @@ public class Database {
 		
 		
 	}
+	
+	
+	public static Administrador loadAdministrador(String nickname) throws SQLException {
+		openConnection();
+		Statement update = connection.createStatement(); 
+		String query = "SELECT * FROM Administrador a WHERE a.nickname = '" + nickname +"'";
+		Administrador admin=null;
+		ResultSet rs = update.executeQuery(query);
+		if(rs.next()) {
+			String clave = rs.getString("clave");
+			admin = new Administrador(nickname, clave);
+		}
+		
+		return admin;
+	}
+	
 	public static ArrayList<Ciudad> loadCiudades() throws SQLException{
 		openConnection();
 		ArrayList<Ciudad> ciudades = new ArrayList<>();
