@@ -165,7 +165,7 @@
                   <Button fx:id="btnLimpiar" mnemonicParsing="false" prefHeight="25.0" prefWidth="26.0" />
                </children>
             </HBox>
-            <Label fx:id="lblNotificacion" layoutX="49.0" layoutY="521.0" text="Ya existe un cliente &#10;con ese nickname o cédula!" textAlignment="CENTER" textFill="RED">
+            <Label fx:id="lblNotificacion" layoutX="49.0" layoutY="521.0" prefHeight="63.0" prefWidth="155.0" text="Ya existe un cliente &#10;con ese nickname o cédula!" textAlignment="CENTER" textFill="RED" wrapText="true">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>

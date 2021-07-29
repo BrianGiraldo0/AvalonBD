@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import com.uniquindio.avalon.database.Database;
@@ -273,8 +274,7 @@ public class ProductoController {
 			try {
 				Database.borrarProducto(select);
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Error: Este producto está asociado con más datos, por lo tanto no puede ser eliminado!");
 			}
 			limpiarCampos();
 			select = null;

@@ -5,6 +5,7 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import com.uniquindio.avalon.database.Database;
@@ -206,7 +207,6 @@ public class EmpleadoController {
 			try {
 				Database.actualizarEmpleado(select);
 			} catch (SQLException ex) {
-				// TODO Auto-generated catch block
 				ex.printStackTrace();
 			}
 			actualizarTabla();
@@ -219,8 +219,7 @@ public class EmpleadoController {
 			try {
 				Database.borrarEmpleado(select);
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
+				JOptionPane.showMessageDialog(null, "Error: Este empleado está asociado con más datos, por lo tanto no puede ser eliminado!");
 			}
 			limpiarCampos();
 			select = null;

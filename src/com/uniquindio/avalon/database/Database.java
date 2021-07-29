@@ -147,6 +147,7 @@ public class Database {
 	
 	public static void dropAllTables() throws SQLException {
 		Statement update = connection.createStatement();
+		update.execute("DROP TABLE IF EXISTS Administrador");
 		update.execute("DROP TABLE IF EXISTS ProductoProveedor");
 		update.execute("DROP TABLE IF EXISTS ProductoPedido");
 		update.execute("DROP TABLE IF EXISTS Pedido");

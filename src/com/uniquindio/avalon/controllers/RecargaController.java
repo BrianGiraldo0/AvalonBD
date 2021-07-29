@@ -303,12 +303,13 @@ public class RecargaController {
 			Date fecha = Date.from(tfFecha.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant());
 			int valorCarga = Integer.parseInt(tfValorRecarga.getText());
 			int total = Integer.parseInt(tfTotal.getText());
-
+			System.out.println(cedulaEmpleado+","+cedulaCliente);
 			try {
 				if (verificarCedulas(cedulaEmpleado, cedulaCliente)) {
 					if (!verificarExistencia(codigo)) {
 
-						Recarga recarga = new Recarga(codigo, total, valorCarga, fecha, cedulaEmpleado, cedulaCliente);
+//						Recarga recarga = new Recarga(codigo, total, valorCarga, fecha,cedulaEmpleado, cedulaCliente); Linea que daba error
+						Recarga recarga = new Recarga(codigo, total, valorCarga, fecha,cedulaCliente, cedulaEmpleado);
 						try {
 							Database.addRecarga(recarga);
 						} catch (SQLException e1) {
